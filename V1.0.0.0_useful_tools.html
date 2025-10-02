@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实用小工具</title>
+    <style>
+        /* 基础样式 */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+            display: flex;
+        }
+        /* 图标样式 */
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* 左侧边栏样式 */
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 100vh;
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 1.5rem 0.5rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 50;
+        }
+        
+        .sidebar:hover,
+        .sidebar:focus-within {
+            width: 240px;
+        }
+        
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .nav-item:hover,
+        .nav-item:focus {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-icon {
+            margin-right: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-text {
+            opacity: 0;
+            visibility: hidden;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar:hover .nav-text,
+        .sidebar:focus-within .nav-text {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* 主内容区域 */
+        
+        .main-content {
+            margin-left: 60px;
+            padding: 2rem;
+            width: calc(100% - 60px);
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar:hover~.main-content,
+        .sidebar:focus-within~.main-content {
+            margin-left: 240px;
+        }
+        /* 页面头部 */
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+        }
+        /* 工具卡片 */
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tool-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        /* 计算器样式 */
+        
+        .calculator {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            min-height: 240px;
+        }
+        
+        .calculator-display {
+            background: #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .calc-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .calc-btn.number {
+            background: white;
+            color: #1e293b;
+        }
+        
+        .calc-btn.operator {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        
+        .calc-btn.equal {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .calc-btn.clear {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .calc-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .calc-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        /* 计时器样式 */
+        
+        .timer {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .timer-display {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            min-height: 60px;
+        }
+        
+        .lap-list {
+            max-height: 150px;
+            overflow-y: auto;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .lap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0.8rem;
+            margin: 0.2rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .lap-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .timer-btn {
+            padding: 0.85rem 1.6rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer-btn.start {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .timer-btn.pause {
+            background: #64748b;
+            color: white;
+        }
+        
+        .timer-btn.reset {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .timer-btn.lap {
+            background: #10b981;
+            color: white;
+        }
+        
+        .timer-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .timer-btn:active {
+            transform: scale(0.92);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 左侧边栏（保留设置导航项） -->
+    <div class="sidebar" id="sidebar">
+        <nav class="nav">
+            <!-- 计算器 -->
+            <div class="nav-item" onclick="scrollToSection('calculator')">
+                <span class="nav-icon icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <circle cx="8" cy="8" r="1.5"/>
+                        <circle cx="16" cy="8" r="1.5"/>
+                        <circle cx="8" cy="16" r="1.5"/>
+                        <circle cx="16" cy="16" r="1.5"/>
+                    </svg>
+                </span>
+                <span class="nav-text">计算器</span>
+            </div>
+            <!-- 计时器 -->
+            <div class="nav-item" onclick="scrollToSection('timer')">
+                <span class="nav-icon icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="6" x2="12" y2="12"/>
+                        <line x1="12" y1="12" x2="16" y2="14"/>
+                    </svg>
+                </span>
+                <span class="nav-text">计时器</span>
+            </div>
+            <!-- 设置（保留） -->
+            <div class="nav-item" onclick="scrollToSection('settings')">
+                <span class="nav-icon icon">
+                    <svg viewBox="0 0 24 24">
+                        <!-- 左侧滑块 -->
+                        <circle cx="6" cy="6" r="2" fill="none" stroke="white" stroke-width="2"/>
+                        <line x1="6" y1="8" x2="6" y2="19" stroke="white" stroke-width="2"/>
+                        <!-- 中间滑块 -->
+                        <line x1="12" y1="5" x2="12" y2="10" stroke="white" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="2" fill="none" stroke="white" stroke-width="2"/>
+                        <line x1="12" y1="14" x2="12" y2="19" stroke="white" stroke-width="2"/>
+                        <!-- 右侧滑块 -->
+                        <line x1="18" y1="5" x2="18" y2="16" stroke="white" stroke-width="2"/> 
+                        <circle cx="18" cy="18" r="2" fill="none" stroke="white" stroke-width="2"/>
+                    </svg>
+                </span>
+                <span class="nav-text">设置</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 主内容区域（删除设置卡片） -->
+    <div class="main-content" id="mainContent">
+        <!-- 页面头部 -->
+        <div class="header">
+            <div class="welcome">欢迎使用实用小工具</div>
+            <div class="user-info">
+                <div class="user-avatar"></div>
+                <span>用户</span>
+            </div>
+        </div>
+
+        <!-- 工具卡片（删除设置卡片） -->
+        <div class="tool-grid">
+            <!-- 计算器卡片 -->
+            <div class="tool-card tool-section" id="calculator">
+                <div class="tool-header">
+                    <div class="tool-title">计算器</div>
+                    <div class="tool-icon icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <circle cx="8" cy="8" r="1.5"/>
+                            <circle cx="16" cy="8" r="1.5"/>
+                            <circle cx="8" cy="16" r="1.5"/>
+                            <circle cx="16" cy="16" r="1.5"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="calculator">
+                    <div class="calculator-display" id="calcDisplay">0</div>
+                    <div class="calculator-buttons">
+                        <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+                        <button class="calc-btn operator" onclick="appendOperator('/')">÷</button>
+                        <button class="calc-btn operator" onclick="appendOperator('*')">×</button>
+                        <button class="calc-btn operator" onclick="appendOperator('-')">−</button>
+                        <button class="calc-btn number" onclick="appendNumber('7')">7</button>
+                        <button class="calc-btn number" onclick="appendNumber('8')">8</button>
+                        <button class="calc-btn number" onclick="appendNumber('9')">9</button>
+                        <button class="calc-btn operator" onclick="appendOperator('+')">+</button>
+                        <button class="calc-btn number" onclick="appendNumber('4')">4</button>
+                        <button class="calc-btn number" onclick="appendNumber('5')">5</button>
+                        <button class="calc-btn number" onclick="appendNumber('6')">6</button>
+                        <button class="calc-btn equal" onclick="calculate()" style="grid-row: span 2;">=</button>
+                        <button class="calc-btn number" onclick="appendNumber('1')">1</button>
+                        <button class="calc-btn number" onclick="appendNumber('2')">2</button>
+                        <button class="calc-btn number" onclick="appendNumber('3')">3</button>
+                        <button class="calc-btn number" onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
+                        <button class="calc-btn number" onclick="appendNumber('.')">.</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 计时器卡片 -->
+            <div class="tool-card tool-section" id="timer">
+                <div class="tool-header">
+                    <div class="tool-title">计时器</div>
+                    <div class="tool-icon icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="6" x2="12" y2="12"/>
+                            <line x1="12" y1="12" x2="16" y2="14"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="timer">
+                    <div class="timer-display" id="timerDisplay">00:00:00.000</div>
+                    <div class="lap-list" id="lapList"></div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start" onclick="startPauseTimer()" id="startPauseBtn">开始</button>
+                        <button class="timer-btn reset" onclick="resetLap()" id="resetLapBtn">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 滚动定位函数（保留设置导航项的scrollToSection） 
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            const headerOffset = 80;
+            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition - headerOffset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // 计算器功能
+        let currentInput = '';
+        let currentOperator = '';
+        let previousInput = '';
+
+        function appendNumber(number) {
+            if (number === '.' && currentInput.includes('.')) return;
+            currentInput = currentInput === '0' ? number : currentInput + number;
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (currentInput === '') return;
+            if (previousInput !== '') calculate();
+            currentOperator = operator;
+            previousInput = currentInput;
+            currentInput = '';
+        }
+
+        function clearDisplay() {
+            currentInput = '';
+            currentOperator = '';
+            previousInput = '';
+            updateDisplay();
+        }
+
+        function calculate() {
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (currentOperator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            currentInput = result.toString();
+            currentOperator = '';
+            previousInput = '';
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const display = document.getElementById('calcDisplay');
+            display.textContent = currentInput || '0';
+        }
+        updateDisplay();
+
+        // 计时器功能
+        let timerInterval;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let running = false;
+        let lapCount = 0;
+
+        function startPauseTimer() {
+            const startPauseBtn = document.getElementById('startPauseBtn');
+            const resetLapBtn = document.getElementById('resetLapBtn');
+            if (!running) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateTimer, 10);
+                running = true;
+                startPauseBtn.textContent = '暂停';
+                startPauseBtn.classList.remove('start');
+                startPauseBtn.classList.add('pause');
+                resetLapBtn.textContent = '计次';
+                resetLapBtn.classList.remove('reset');
+                resetLapBtn.classList.add('lap');
+                resetLapBtn.disabled = false;
+            } else {
+                clearInterval(timerInterval);
+                running = false;
+                startPauseBtn.textContent = '继续';
+                startPauseBtn.classList.remove('pause');
+                startPauseBtn.classList.add('start');
+                resetLapBtn.textContent = '重置';
+                resetLapBtn.classList.remove('lap');
+                resetLapBtn.classList.add('reset');
+                resetLapBtn.disabled = false;
+            }
+        }
+
+        function resetLap() {
+            const resetLapBtn = document.getElementById('resetLapBtn');
+            if (running) {
+                lapCount++;
+                const lapTime = formatTime(elapsedTime);
+                addLapItem(lapCount, lapTime);
+            } else {
+                clearInterval(timerInterval);
+                running = false;
+                startTime = 0;
+                elapsedTime = 0;
+                updateTimerDisplay(0);
+                lapCount = 0;
+                document.getElementById('lapList').innerHTML = '';
+                const startPauseBtn = document.getElementById('startPauseBtn');
+                startPauseBtn.textContent = '开始';
+                startPauseBtn.classList.remove('pause');
+                startPauseBtn.classList.add('start');
+                resetLapBtn.textContent = '重置';
+                resetLapBtn.classList.remove('lap');
+                resetLapBtn.classList.add('reset');
+                resetLapBtn.disabled = false;
+            }
+        }
+
+        function updateTimer() {
+            elapsedTime = Date.now() - startTime;
+            updateTimerDisplay(elapsedTime);
+        }
+
+        function updateTimerDisplay(time) {
+            const display = document.getElementById('timerDisplay');
+            const hours = Math.floor(time / 3600000);
+            const minutes = Math.floor((time % 3600000) / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+            const milliseconds = Math.floor(time % 1000);
+            const formattedTime =
+                `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${padMilliseconds(milliseconds)}`;
+            display.textContent = formattedTime;
+        }
+
+        function addLapItem(number, time) {
+            const lapList = document.getElementById('lapList');
+            const item = document.createElement('div');
+            item.className = 'lap-item';
+            item.innerHTML = `<span>计次 #${number}</span><span>${time}</span>`;
+            lapList.prepend(item);
+        }
+
+        function pad(number) {
+            return number.toString().padStart(2, '0');
+        }
+
+        function padMilliseconds(number) {
+            return number.toString().padStart(3, '0');
+        }
+
+        function formatTime(time) {
+            const hours = Math.floor(time / 3600000);
+            const minutes = Math.floor((time % 3600000) / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+            const milliseconds = time % 1000;
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${padMilliseconds(milliseconds)}`;
+        }
+    </script>
+</body>
+
+</html>
