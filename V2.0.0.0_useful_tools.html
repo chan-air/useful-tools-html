@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理系统</title>
+    <style>
+         :root {
+            /* 默认主题颜色 */
+            --primary-start: #667eea;
+            --primary-end: #764ba2;
+            --accent-color: #667eea;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* 深色模式样式 */
+        
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .content-card,
+        body.dark-mode .page-header {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .content-card h2,
+        body.dark-mode .page-header h1,
+        body.dark-mode .page-header p {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .content-card p {
+            color: #cccccc;
+        }
+        
+        body.dark-mode .settings-group h3 {
+            color: #ffffff;
+            border-bottom-color: #444444;
+        }
+        
+        body.dark-mode .setting-item {
+            border-bottom-color: #333333;
+        }
+        
+        body.dark-mode .setting-label {
+            color: #e0e0e0;
+        }
+        /* 禁用动画时的样式 */
+        
+        body.no-animations * {
+            animation: none !important;
+            transition: none !important;
+        }
+        /* 侧边栏容器 */
+        
+        .sidebar-container {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+        /* 侧边栏主体 */
+        
+        .sidebar {
+            width: 60px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
+            border-radius: 0 10px 10px 0;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        /* 鼠标悬停时展开 - 可通过设置控制 */
+        
+        .sidebar-container:hover .sidebar {
+            width: 250px;
+        }
+        
+        .sidebar-container.no-hover:hover .sidebar {
+            width: 60px;
+        }
+        /* 菜单项容器 */
+        
+        .menu-items {
+            padding: 0;
+            list-style: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Logo菜单项 */
+        
+        .logo-item {
+            position: relative;
+            margin: 0;
+            height: 60px;
+        }
+        
+        .logo-link {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: default;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sidebar-container:hover .logo-link {
+            padding: 0 20px;
+        }
+        
+        .sidebar-container.no-hover:hover .logo-link {
+            padding: 0;
+        }
+        /* 单个菜单项 */
+        
+        .menu-item {
+            position: relative;
+            margin: 0;
+        }
+        /* 首页菜单项添加上边距 */
+        
+        .menu-item:first-of-type {
+            margin-top: 10px;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            width: 100%;
+            height: 60px;
+        }
+        
+        .sidebar-container:hover .menu-link {
+            padding: 0 20px;
+        }
+        
+        .sidebar-container.no-hover:hover .menu-link {
+            padding: 0;
+        }
+        
+        .menu-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        
+        .menu-link:active {
+            transform: scale(0.98);
+        }
+        /* 图标容器 */
+        
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: absolute;
+            left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-container:hover .menu-icon {
+            left: 20px;
+        }
+        
+        .sidebar-container.no-hover:hover .menu-icon {
+            left: 10px;
+        }
+        /* SVG图标样式 */
+        
+        .menu-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* Logo图标特殊样式 */
+        
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 1.5;
+        }
+        /* 菜单文本 */
+        
+        .menu-text {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 70px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        /* Logo文本特殊样式 */
+        
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .sidebar-container:hover .menu-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .sidebar-container.no-hover:hover .menu-text {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        /* 主内容区域 */
+        
+        .main-content {
+            margin-left: 60px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar-container:hover~.main-content {
+            margin-left: 250px;
+        }
+        
+        .sidebar-container.no-hover:hover~.main-content {
+            margin-left: 60px;
+        }
+        /* 内容页面 */
+        
+        .content-page {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .content-page.active {
+            display: block;
+        }
+        /* 内容卡片 */
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .content-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+        
+        .content-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        /* 顶部标题 */
+        
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+        
+        .page-header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        /* 设置页面样式 */
+        
+        .settings-group {
+            margin-bottom: 30px;
+        }
+        
+        .settings-group h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: border-color 0.3s ease;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .setting-control {
+            display: flex;
+            align-items: center;
+        }
+        /* 开关按钮 */
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+        /* 主题颜色选择器 */
+        
+        .theme-section {
+            margin-bottom: 15px;
+        }
+        
+        .theme-section-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .theme-colors {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .theme-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-color:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-color.active {
+            border-color: #333;
+        }
+        
+        .theme-color.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+        /* 美化的语言选择器样式 */
+        
+        .language-selector {
+            position: relative;
+            min-width: 180px;
+        }
+        
+        .language-select {
+            width: 100%;
+            padding: 10px 15px;
+            padding-right: 40px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .language-select:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        body.dark-mode .language-select {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        body.dark-mode .language-select:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-mode .language-select:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        /* 响应式设计 */
+        
+        @media (max-width: 768px) {
+            .sidebar-container:hover .sidebar {
+                width: 200px;
+            }
+            .sidebar-container:hover~.main-content {
+                margin-left: 200px;
+            }
+            .main-content {
+                margin-left: 60px;
+                padding: 20px;
+            }
+        }
+        /* 动画效果 */
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* 通知样式 */
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 3000;
+            max-width: 300px;
+            border-left: 4px solid var(--accent-color);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        body.dark-mode .notification {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 侧边栏容器 -->
+    <div class="sidebar-container" id="sidebarContainer">
+        <nav class="sidebar">
+            <ul class="menu-items">
+                <!-- Logo位置 -->
+                <li class="logo-item">
+                    <a href="#" class="logo-link">
+                        <span class="menu-icon logo-icon">
+                            <!-- Logo图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                                <path d="M2 17L12 22L22 17"></path>
+                                <path d="M2 12L12 17L22 12"></path>
+                            </svg>
+                        </span>
+                        <span class="menu-text logo-text" data-i18n="system-title">管理系统</span>
+                    </a>
+                </li>
+
+                <!-- 首页菜单项 -->
+                <li class="menu-item">
+                    <a href="#" class="menu-link active" data-page="home">
+                        <span class="menu-icon">
+                            <!-- 首页图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </span>
+                        <span class="menu-text" data-i18n="menu-home">首页</span>
+                    </a>
+                </li>
+
+                <!-- 设置菜单项 -->
+                <li class="menu-item">
+                    <a href="#" class="menu-link" data-page="settings">
+                        <span class="menu-icon">
+                            <!-- 设置图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5A3.5 3.5 0 0 1 15.5 12A3.5 3.5 0 0 1 12 15.5M19.43 12.97C19.47 12.65 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.27 4.96 19.05 5.05L16.56 6.05C16.04 5.66 15.5 5.32 14.87 5.07L14.5 2.42C14.46 2.18 14.25 2 14 2H10C9.75 2 9.54 2.18 9.5 2.42L9.13 5.07C8.5 5.32 7.96 5.66 7.44 6.05L4.95 5.05C4.73 4.96 4.46 5.05 4.34 5.27L2.34 8.73C2.21 8.95 2.27 9.22 2.46 9.37L4.57 11C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.65 4.57 12.97L2.46 14.63C2.27 14.78 2.21 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.73 19.03 4.95 18.95L7.44 17.94C7.96 18.34 8.5 18.68 9.13 18.93L9.5 21.58C9.54 21.82 9.75 22 10 22H14C14.25 22 14.46 21.82 14.5 21.58L14.87 18.93C15.5 18.67 16.04 18.34 16.56 17.94L19.05 18.95C19.27 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.97Z"></path>
+                            </svg>
+                        </span>
+                        <span class="menu-text" data-i18n="menu-settings">系统设置</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 首页内容 -->
+        <div id="home-page" class="content-page active">
+            <div class="page-header">
+                <h1 data-i18n="home-welcome">欢迎来到管理系统</h1>
+                <p data-i18n="home-description">这是一个带有可伸缩侧边栏的现代化界面设计</p>
+            </div>
+            <div class="content-card">
+                <h2 data-i18n="sidebar-title">侧边栏功能说明</h2>
+                <p data-i18n="sidebar-description-1">将鼠标移动到左侧的紫色边栏上，侧边栏会自动展开显示完整的菜单项。</p>
+                <p data-i18n="sidebar-description-2">移开鼠标后，侧边栏会自动收起，只显示图标，节省页面空间。</p>
+            </div>
+            <div class="content-card">
+                <h2 data-i18n="design-title">设计特点</h2>
+                <p data-i18n="design-feature-1"><strong>1. 平滑动画：</strong> 使用 CSS transition 实现流畅的展开收起效果。</p>
+                <p data-i18n="design-feature-2"><strong>2. 渐变背景：</strong> 侧边栏采用紫色渐变设计，视觉效果更加现代。</p>
+                <p data-i18n="design-feature-3"><strong>3. 圆角设计：</strong> 右侧圆角让界面更加柔和美观。</p>
+                <p data-i18n="design-feature-4"><strong>4. 响应式布局：</strong> 适配不同屏幕尺寸，在移动设备上也能良好显示。</p>
+            </div>
+            <div class="content-card">
+                <h2 data-i18n="interaction-title">交互体验</h2>
+                <p data-i18n="interaction-description-1">每个菜单项都有悬停效果，点击时会有轻微的缩放反馈。</p>
+                <p data-i18n="interaction-description-2">菜单文字会在侧边栏展开时淡入显示，收起时淡出隐藏。</p>
+                <p data-i18n="interaction-description-3">主内容区域会根据侧边栏的展开状态自动调整边距。</p>
+            </div>
+        </div>
+        <!-- 设置页面内容 -->
+        <div id="settings-page" class="content-page">
+            <div class="page-header">
+                <h1 data-i18n="settings-title">系统设置</h1>
+                <p data-i18n="settings-description">在这里配置系统的各项参数</p>
+            </div>
+            <div class="content-card">
+                <div class="settings-group">
+                    <h3 data-i18n="settings-interface">界面设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-dark-mode">深色模式</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-auto-expand">自动展开侧边栏</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-expand" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-animations">显示动画效果</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="animations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-language">语言选择</span>
+                        <div class="setting-control">
+                            <div class="language-selector">
+                                <select class="language-select" id="language-select">
+                                    <option value="zh-CN">中文（简体）</option>
+                                    <option value="en-US">English</option>
+                                    <option value="ja-JP">日本語</option>
+                                    <option value="es-ES">Español</option>
+                                    <option value="fr-FR">Français</option>
+                                    <option value="de-DE">Deutsch</option>
+                                    <option value="ko-KR">한국어</option>
+                                    <option value="ru-RU">Русский</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-theme">主题颜色</span>
+                        <div class="setting-control">
+                            <div>
+                                <!-- 浅色模式主题 -->
+                                <div class="theme-section">
+                                    <div class="theme-section-title" data-i18n="theme-light">浅色模式</div>
+                                    <div class="theme-colors">
+                                        <div class="theme-color active" data-theme="0" style="background: linear-gradient(135deg, #667eea, #764ba2)" title="优雅紫"></div>
+                                        <div class="theme-color" data-theme="1" style="background: linear-gradient(135deg, #4facfe, #00f2fe)" title="清新蓝"></div>
+                                        <div class="theme-color" data-theme="2" style="background: linear-gradient(135deg, #43e97b, #38f9d7)" title="自然绿"></div>
+                                        <div class="theme-color" data-theme="3" style="background: linear-gradient(135deg, #fa709a, #fee140)" title="活力橙"></div>
+                                    </div>
+                                </div>
+
+                                <!-- 深色模式主题 -->
+                                <div class="theme-section">
+                                    <div class="theme-section-title" data-i18n="theme-dark">深色模式</div>
+                                    <div class="theme-colors">
+                                        <div class="theme-color" data-theme="4" style="background: linear-gradient(135deg, #f093fb, #f5576c)" title="魅惑粉"></div>
+                                        <div class="theme-color" data-theme="5" style="background: linear-gradient(135deg, #30cfd0, #330867)" title="深邃蓝"></div>
+                                        <div class="theme-color" data-theme="6" style="background: linear-gradient(135deg, #a8edea, #fed6e3)" title="柔和青"></div>
+                                        <div class="theme-color" data-theme="7" style="background: linear-gradient(135deg, #ff9a9e, #fecfef)" title="浪漫粉"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 data-i18n="settings-notifications">通知设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-desktop-notifications">桌面通知</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="desktop-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-sound-alerts">声音提醒</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="sound-alerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-email-notifications">邮件通知</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 data-i18n="settings-privacy">隐私设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-browsing-history">保存浏览历史</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="browsing-history" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-auto-save-forms">自动保存表单</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-save-forms">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // 多语言支持
+        const translations = {
+            'zh-CN': {
+                'system-title': '管理系统',
+                'menu-home': '首页',
+                'menu-settings': '系统设置',
+                'home-welcome': '欢迎来到管理系统',
+                'home-description': '这是一个带有可伸缩侧边栏的现代化界面设计',
+                'sidebar-title': '侧边栏功能说明',
+                'sidebar-description-1': '将鼠标移动到左侧的紫色边栏上，侧边栏会自动展开显示完整的菜单项。',
+                'sidebar-description-2': '移开鼠标后，侧边栏会自动收起，只显示图标，节省页面空间。',
+                'design-title': '设计特点',
+                'design-feature-1': '<strong>1. 平滑动画：</strong> 使用 CSS transition 实现流畅的展开收起效果。',
+                'design-feature-2': '<strong>2. 渐变背景：</strong> 侧边栏采用紫色渐变设计，视觉效果更加现代。',
+                'design-feature-3': '<strong>3. 圆角设计：</strong> 右侧圆角让界面更加柔和美观。',
+                'design-feature-4': '<strong>4. 响应式布局：</strong> 适配不同屏幕尺寸，在移动设备上也能良好显示。',
+                'interaction-title': '交互体验',
+                'interaction-description-1': '每个菜单项都有悬停效果，点击时会有轻微的缩放反馈。',
+                'interaction-description-2': '菜单文字会在侧边栏展开时淡入显示，收起时淡出隐藏。',
+                'interaction-description-3': '主内容区域会根据侧边栏的展开状态自动调整边距。',
+                'settings-title': '系统设置',
+                'settings-description': '在这里配置系统的各项参数',
+                'settings-interface': '界面设置',
+                'settings-dark-mode': '深色模式',
+                'settings-auto-expand': '自动展开侧边栏',
+                'settings-animations': '显示动画效果',
+                'settings-language': '语言选择',
+                'settings-theme': '主题颜色',
+                'theme-light': '浅色模式',
+                'theme-dark': '深色模式',
+                'settings-notifications': '通知设置',
+                'settings-desktop-notifications': '桌面通知',
+                'settings-sound-alerts': '声音提醒',
+                'settings-email-notifications': '邮件通知',
+                'settings-privacy': '隐私设置',
+                'settings-browsing-history': '保存浏览历史',
+                'settings-auto-save-forms': '自动保存表单',
+                'notification-switched-to': '已切换到：',
+                'notification-dark-mode-on': '深色模式已开启',
+                'notification-dark-mode-off': '深色模式已关闭',
+                'notification-auto-expand-on': '自动展开侧边栏已开启',
+                'notification-auto-expand-off': '自动展开侧边栏已关闭',
+                'notification-animations-on': '动画效果已开启',
+                'notification-animations-off': '动画效果已关闭',
+                'notification-language-changed': '语言已切换为：',
+                'notification-desktop-notifications-on': '桌面通知已开启',
+                'notification-desktop-notifications-off': '桌面通知已关闭',
+                'notification-sound-alerts-on': '声音提醒已开启',
+                'notification-sound-alerts-off': '声音提醒已关闭',
+                'notification-email-notifications-on': '邮件通知已开启\n您将收到邮件提醒',
+                'notification-email-notifications-off': '邮件通知已关闭',
+                'notification-browsing-history-on': '浏览历史保存已开启',
+                'notification-browsing-history-off': '浏览历史保存已关闭',
+                'notification-auto-save-forms-on': '表单自动保存已开启',
+                'notification-auto-save-forms-off': '表单自动保存已关闭',
+                'notification-theme-changed': '已切换到',
+                'notification-theme': '主题'
+            },
+            'en-US': {
+                'system-title': 'Management System',
+                'menu-home': 'Home',
+                'menu-settings': 'System Settings',
+                'home-welcome': 'Welcome to Management System',
+                'home-description': 'This is a modern interface design with a collapsible sidebar',
+                'sidebar-title': 'Sidebar Features',
+                'sidebar-description-1': 'Move your mouse over the purple sidebar on the left, and it will automatically expand to show the complete menu items.',
+                'sidebar-description-2': 'After moving the mouse away, the sidebar will automatically collapse, showing only icons to save page space.',
+                'design-title': 'Design Features',
+                'design-feature-1': '<strong>1. Smooth Animation:</strong> Use CSS transition to achieve smooth expand and collapse effects.',
+                'design-feature-2': '<strong>2. Gradient Background:</strong> The sidebar uses a purple gradient design for a more modern visual effect.',
+                'design-feature-3': '<strong>3. Rounded Corners:</strong> The right rounded corners make the interface more soft and beautiful.',
+                'design-feature-4': '<strong>4. Responsive Layout:</strong> Adapts to different screen sizes and displays well on mobile devices.',
+                'interaction-title': 'Interactive Experience',
+                'interaction-description-1': 'Each menu item has a hover effect, and there will be a slight scaling feedback when clicked.',
+                'interaction-description-2': 'Menu text will fade in when the sidebar expands and fade out when it collapses.',
+                'interaction-description-3': 'The main content area will automatically adjust the margin according to the expansion state of the sidebar.',
+                'settings-title': 'System Settings',
+                'settings-description': 'Configure various system parameters here',
+                'settings-interface': 'Interface Settings',
+                'settings-dark-mode': 'Dark Mode',
+                'settings-auto-expand': 'Auto Expand Sidebar',
+                'settings-animations': 'Show Animations',
+                'settings-language': 'Language Selection',
+                'settings-theme': 'Theme Color',
+                'theme-light': 'Light Mode',
+                'theme-dark': 'Dark Mode',
+                'settings-notifications': 'Notification Settings',
+                'settings-desktop-notifications': 'Desktop Notifications',
+                'settings-sound-alerts': 'Sound Alerts',
+                'settings-email-notifications': 'Email Notifications',
+                'settings-privacy': 'Privacy Settings',
+                'settings-browsing-history': 'Save Browsing History',
+                'settings-auto-save-forms': 'Auto Save Forms',
+                'notification-switched-to': 'Switched to: ',
+                'notification-dark-mode-on': 'Dark mode enabled',
+                'notification-dark-mode-off': 'Dark mode disabled',
+                'notification-auto-expand-on': 'Auto expand sidebar enabled',
+                'notification-auto-expand-off': 'Auto expand sidebar disabled',
+                'notification-animations-on': 'Animations enabled',
+                'notification-animations-off': 'Animations disabled',
+                'notification-language-changed': 'Language changed to: ',
+                'notification-desktop-notifications-on': 'Desktop notifications enabled',
+                'notification-desktop-notifications-off': 'Desktop notifications disabled',
+                'notification-sound-alerts-on': 'Sound alerts enabled',
+                'notification-sound-alerts-off': 'Sound alerts disabled',
+                'notification-email-notifications-on': 'Email notifications enabled\nYou will receive email reminders',
+                'notification-email-notifications-off': 'Email notifications disabled',
+                'notification-browsing-history-on': 'Browsing history saving enabled',
+                'notification-browsing-history-off': 'Browsing history saving disabled',
+                'notification-auto-save-forms-on': 'Auto save forms enabled',
+                'notification-auto-save-forms-off': 'Auto save forms disabled',
+                'notification-theme-changed': 'Switched to',
+                'notification-theme': 'theme'
+            },
+            'ja-JP': {
+                'system-title': '管理システム',
+                'menu-home': 'ホーム',
+                'menu-settings': 'システム設定',
+                'home-welcome': '管理システムへようこそ',
+                'home-description': 'これは折りたたみ可能なサイドバーを備えたモダンなインターフェースデザインです',
+                'sidebar-title': 'サイドバー機能',
+                'sidebar-description-1': 'マウスを左側の紫色のサイドバーに移動すると、自動的に展開して完全なメニュー項目が表示されます。',
+                'sidebar-description-2': 'マウスを移動した後、サイドバーは自動的に折りたたまれ、アイコンのみが表示され、ページスペースを節約します。',
+                'design-title': 'デザインの特徴',
+                'design-feature-1': '<strong>1. スムーズなアニメーション：</strong> CSSトランジションを使用して、スムーズな展開と折りたたみ効果を実現します。',
+                'design-feature-2': '<strong>2. グラデーション背景：</strong> サイドバーは紫色のグラデーションデザインを使用し、よりモダンな視覚効果を実現します。',
+                'design-feature-3': '<strong>3. 角丸デザイン：</strong> 右側の角丸により、インターフェースがより柔らかく美しくなります。',
+                'design-feature-4': '<strong>4. レスポンシブレイアウト：</strong> さまざまな画面サイズに適応し、モバイルデバイスでも良好に表示されます。',
+                'interaction-title': 'インタラクティブ体験',
+                'interaction-description-1': '各メニュー項目にはホバー効果があり、クリックするとわずかなスケーリングフィードバックがあります。',
+                'interaction-description-2': 'メニューテキストは、サイドバーが展開するとフェードインし、折りたたまれるとフェードアウトします。',
+                'interaction-description-3': 'メインコンテンツエリアは、サイドバーの展開状態に応じてマージンを自動的に調整します。',
+                'settings-title': 'システム設定',
+                'settings-description': 'ここでシステムのさまざまなパラメータを構成します',
+                'settings-interface': 'インターフェース設定',
+                'settings-dark-mode': 'ダークモード',
+                'settings-auto-expand': 'サイドバーを自動展開',
+                'settings-animations': 'アニメーションを表示',
+                'settings-language': '言語選択',
+                'settings-theme': 'テーマカラー',
+                'theme-light': 'ライトモード',
+                'theme-dark': 'ダークモード',
+                'settings-notifications': '通知設定',
+                'settings-desktop-notifications': 'デスクトップ通知',
+                'settings-sound-alerts': 'サウンドアラート',
+                'settings-email-notifications': 'メール通知',
+                'settings-privacy': 'プライバシー設定',
+                'settings-browsing-history': '閲覧履歴を保存',
+                'settings-auto-save-forms': 'フォームを自動保存',
+                'notification-switched-to': '切り替えました：',
+                'notification-dark-mode-on': 'ダークモードが有効になりました',
+                'notification-dark-mode-off': 'ダークモードが無効になりました',
+                'notification-auto-expand-on': 'サイドバーの自動展開が有効になりました',
+                'notification-auto-expand-off': 'サイドバーの自動展開が無効になりました',
+                'notification-animations-on': 'アニメーションが有効になりました',
+                'notification-animations-off': 'アニメーションが無効になりました',
+                'notification-language-changed': '言語が変更されました：',
+                'notification-desktop-notifications-on': 'デスクトップ通知が有効になりました',
+                'notification-desktop-notifications-off': 'デスクトップ通知が無効になりました',
+                'notification-sound-alerts-on': 'サウンドアラートが有効になりました',
+                'notification-sound-alerts-off': 'サウンドアラートが無効になりました',
+                'notification-email-notifications-on': 'メール通知が有効になりました\nメールリマインダーを受け取ります',
+                'notification-email-notifications-off': 'メール通知が無効になりました',
+                'notification-browsing-history-on': '閲覧履歴の保存が有効になりました',
+                'notification-browsing-history-off': '閲覧履歴の保存が無効になりました',
+                'notification-auto-save-forms-on': 'フォームの自動保存が有効になりました',
+                'notification-auto-save-forms-off': 'フォームの自動保存が無効になりました',
+                'notification-theme-changed': '切り替えました',
+                'notification-theme': 'テーマ'
+            },
+            'es-ES': {
+                'system-title': 'Sistema de Gestión',
+                'menu-home': 'Inicio',
+                'menu-settings': 'Configuración del Sistema',
+                'home-welcome': 'Bienvenido al Sistema de Gestión',
+                'home-description': 'Este es un diseño de interfaz moderno con una barra lateral plegable',
+                'sidebar-title': 'Características de la Barra Lateral',
+                'sidebar-description-1': 'Mueva el mouse sobre la barra lateral púrpura a la izquierda, y se expandirá automáticamente para mostrar los elementos completos del menú.',
+                'sidebar-description-2': 'Después de mover el mouse, la barra lateral se colapsará automáticamente, mostrando solo iconos para ahorrar espacio en la página.',
+                'design-title': 'Características del Diseño',
+                'design-feature-1': '<strong>1. Animación Suave:</strong> Use la transición CSS para lograr efectos suaves de expansión y colapso.',
+                'design-feature-2': '<strong>2. Fondo Degradado:</strong> La barra lateral utiliza un diseño de gradiente púrpura para un efecto visual más moderno.',
+                'design-feature-3': '<strong>3. Esquinas Redondeadas:</strong> Las esquinas redondeadas derechas hacen que la interfaz sea más suave y hermosa.',
+                'design-feature-4': '<strong>4. Diseño Responsivo:</strong> Se adapta a diferentes tamaños de pantalla y se muestra bien en dispositivos móviles.',
+                'interaction-title': 'Experiencia Interactiva',
+                'interaction-description-1': 'Cada elemento del menú tiene un efecto de desplazamiento, y habrá una ligera retroalimentación de escala al hacer clic.',
+                'interaction-description-2': 'El texto del menú se desvanecerá cuando la barra lateral se expanda y se desvanecerá cuando se colapse.',
+                'interaction-description-3': 'El área de contenido principal ajustará automáticamente el margen según el estado de expansión de la barra lateral.',
+                'settings-title': 'Configuración del Sistema',
+                'settings-description': 'Configure varios parámetros del sistema aquí',
+                'settings-interface': 'Configuración de Interfaz',
+                'settings-dark-mode': 'Modo Oscuro',
+                'settings-auto-expand': 'Expansión Automática de la Barra Lateral',
+                'settings-animations': 'Mostrar Animaciones',
+                'settings-language': 'Selección de Idioma',
+                'settings-theme': 'Color del Tema',
+                'theme-light': 'Modo Claro',
+                'theme-dark': 'Modo Oscuro',
+                'settings-notifications': 'Configuración de Notificaciones',
+                'settings-desktop-notifications': 'Notificaciones de Escritorio',
+                'settings-sound-alerts': 'Alertas de Sonido',
+                'settings-email-notifications': 'Notificaciones por Correo',
+                'settings-privacy': 'Configuración de Privacidad',
+                'settings-browsing-history': 'Guardar Historial de Navegación',
+                'settings-auto-save-forms': 'Guardar Formularios Automáticamente',
+                'notification-switched-to': 'Cambiado a: ',
+                'notification-dark-mode-on': 'Modo oscuro activado',
+                'notification-dark-mode-off': 'Modo oscuro desactivado',
+                'notification-auto-expand-on': 'Expansión automática de la barra lateral activada',
+                'notification-auto-expand-off': 'Expansión automática de la barra lateral desactivada',
+                'notification-animations-on': 'Animaciones activadas',
+                'notification-animations-off': 'Animaciones desactivadas',
+                'notification-language-changed': 'Idioma cambiado a: ',
+                'notification-desktop-notifications-on': 'Notificaciones de escritorio activadas',
+                'notification-desktop-notifications-off': 'Notificaciones de escritorio desactivadas',
+                'notification-sound-alerts-on': 'Alertas de sonido activadas',
+                'notification-sound-alerts-off': 'Alertas de sonido desactivadas',
+                'notification-email-notifications-on': 'Notificaciones por correo activadas\nRecibirá recordatorios por correo',
+                'notification-email-notifications-off': 'Notificaciones por correo desactivadas',
+                'notification-browsing-history-on': 'Guardado del historial de navegación activado',
+                'notification-browsing-history-off': 'Guardado del historial de navegación desactivado',
+                'notification-auto-save-forms-on': 'Guardado automático de formularios activado',
+                'notification-auto-save-forms-off': 'Guardado automático de formularios desactivado',
+                'notification-theme-changed': 'Cambiado a',
+                'notification-theme': 'tema'
+            },
+            'fr-FR': {
+                'system-title': 'Système de Gestion',
+                'menu-home': 'Accueil',
+                'menu-settings': 'Paramètres Système',
+                'home-welcome': 'Bienvenue dans le Système de Gestion',
+                'home-description': 'Ceci est une conception d\'interface moderne avec une barre latérale rétractable',
+                'sidebar-title': 'Fonctionnalités de la Barre Latérale',
+                'sidebar-description-1': 'Déplacez votre souris sur la barre latérale violette à gauche, et elle se développera automatiquement pour afficher les éléments complets du menu.',
+                'sidebar-description-2': 'Après avoir déplacé la souris, la barre latérale se rétractera automatiquement, affichant uniquement des icônes pour économiser l\'espace de la page.',
+                'design-title': 'Caractéristiques de Conception',
+                'design-feature-1': '<strong>1. Animation Fluide :</strong> Utilisez la transition CSS pour obtenir des effets de développement et de rétractation fluides.',
+                'design-feature-2': '<strong>2. Arrière-plan Dégradé :</strong> La barre latérale utilise une conception de dégradé violet pour un effet visuel plus moderne.',
+                'design-feature-3': '<strong>3. Coins Arrondis :</strong> Les coins arrondis droits rendent l\'interface plus douce et belle.',
+                'design-feature-4': '<strong>4. Mise en Page Réactive :</strong> S\'adapte à différentes tailles d\'écran et s\'affiche bien sur les appareils mobiles.',
+                'interaction-title': 'Expérience Interactive',
+                'interaction-description-1': 'Chaque élément de menu a un effet de survol, et il y aura un léger retour d\'échelle lors du clic.',
+                'interaction-description-2': 'Le texte du menu s\'estompera lorsque la barre latérale se développera et s\'estompera lorsqu\'elle se rétractera.',
+                'interaction-description-3': 'La zone de contenu principal ajustera automatiquement la marge en fonction de l\'état de développement de la barre latérale.',
+                'settings-title': 'Paramètres Système',
+                'settings-description': 'Configurez divers paramètres système ici',
+                'settings-interface': 'Paramètres d\'Interface',
+                'settings-dark-mode': 'Mode Sombre',
+                'settings-auto-expand': 'Développement Automatique de la Barre Latérale',
+                'settings-animations': 'Afficher les Animations',
+                'settings-language': 'Sélection de Langue',
+                'settings-theme': 'Couleur du Thème',
+                'theme-light': 'Mode Clair',
+                'theme-dark': 'Mode Sombre',
+                'settings-notifications': 'Paramètres de Notification',
+                'settings-desktop-notifications': 'Notifications de Bureau',
+                'settings-sound-alerts': 'Alertes Sonores',
+                'settings-email-notifications': 'Notifications par E-mail',
+                'settings-privacy': 'Paramètres de Confidentialité',
+                'settings-browsing-history': 'Enregistrer l\'Historique de Navigation',
+                'settings-auto-save-forms': 'Enregistrement Automatique des Formulaires',
+                'notification-switched-to': 'Passé à : ',
+                'notification-dark-mode-on': 'Mode sombre activé',
+                'notification-dark-mode-off': 'Mode sombre désactivé',
+                'notification-auto-expand-on': 'Développement automatique de la barre latérale activé',
+                'notification-auto-expand-off': 'Développement automatique de la barre latérale désactivé',
+                'notification-animations-on': 'Animations activées',
+                'notification-animations-off': 'Animations désactivées',
+                'notification-language-changed': 'Langue changée en : ',
+                'notification-desktop-notifications-on': 'Notifications de bureau activées',
+                'notification-desktop-notifications-off': 'Notifications de bureau désactivées',
+                'notification-sound-alerts-on': 'Alertes sonores activées',
+                'notification-sound-alerts-off': 'Alertes sonores désactivées',
+                'notification-email-notifications-on': 'Notifications par e-mail activées\nVous recevrez des rappels par e-mail',
+                'notification-email-notifications-off': 'Notifications par e-mail désactivées',
+                'notification-browsing-history-on': 'Enregistrement de l\'historique de navigation activé',
+                'notification-browsing-history-off': 'Enregistrement de l\'historique de navigation désactivé',
+                'notification-auto-save-forms-on': 'Enregistrement automatique des formulaires activé',
+                'notification-auto-save-forms-off': 'Enregistrement automatique des formulaires désactivé',
+                'notification-theme-changed': 'Passé à',
+                'notification-theme': 'thème'
+            },
+            'de-DE': {
+                'system-title': 'Verwaltungssystem',
+                'menu-home': 'Startseite',
+                'menu-settings': 'Systemeinstellungen',
+                'home-welcome': 'Willkommen beim Verwaltungssystem',
+                'home-description': 'Dies ist ein modernes Schnittstellendesign mit einer zusammenklappbaren Seitenleiste',
+                'sidebar-title': 'Seitenleistenfunktionen',
+                'sidebar-description-1': 'Bewegen Sie die Maus über die violette Seitenleiste links, und sie wird automatisch erweitert, um die vollständigen Menüelemente anzuzeigen.',
+                'sidebar-description-2': 'Nach dem Bewegen der Maus wird die Seitenleiste automatisch zusammengeklappt und zeigt nur Symbole an, um Platz auf der Seite zu sparen.',
+                'design-title': 'Designmerkmale',
+                'design-feature-1': '<strong>1. Fließende Animation:</strong> Verwenden Sie den CSS-Übergang, um fließende Erweiterungs- und Zusammenklappeffekte zu erzielen.',
+                'design-feature-2': '<strong>2. Verlaufshintergrund:</strong> Die Seitenleiste verwendet ein violettes Verlaufsdesign für einen moderneren visuellen Effekt.',
+                'design-feature-3': '<strong>3. Abgerundete Ecken:</strong> Die rechten abgerundeten Ecken machen die Oberfläche weicher und schöner.',
+                'design-feature-4': '<strong>4. Responsives Layout:</strong> Passt sich verschiedenen Bildschirmgrößen an und wird auch auf mobilen Geräten gut angezeigt.',
+                'interaction-title': 'Interaktive Erfahrung',
+                'interaction-description-1': 'Jedes Menüelement hat einen Hover-Effekt, und beim Klicken gibt es eine leichte Skalierungs-Feedback.',
+                'interaction-description-2': 'Der Menütext wird eingeblendet, wenn die Seitenleiste erweitert wird, und ausgeblendet, wenn sie zusammengeklappt wird.',
+                'interaction-description-3': 'Der Hauptinhaltsbereich passt den Rand automatisch an den Erweiterungszustand der Seitenleiste an.',
+                'settings-title': 'Systemeinstellungen',
+                'settings-description': 'Konfigurieren Sie hier verschiedene Systemparameter',
+                'settings-interface': 'Schnittstelleneinstellungen',
+                'settings-dark-mode': 'Dunkler Modus',
+                'settings-auto-expand': 'Seitenleiste automatisch erweitern',
+                'settings-animations': 'Animationen anzeigen',
+                'settings-language': 'Sprachauswahl',
+                'settings-theme': 'Themenfarbe',
+                'theme-light': 'Heller Modus',
+                'theme-dark': 'Dunkler Modus',
+                'settings-notifications': 'Benachrichtigungseinstellungen',
+                'settings-desktop-notifications': 'Desktop-Benachrichtigungen',
+                'settings-sound-alerts': 'Sound-Warnungen',
+                'settings-email-notifications': 'E-Mail-Benachrichtigungen',
+                'settings-privacy': 'Privatsphäre-Einstellungen',
+                'settings-browsing-history': 'Browserverlauf speichern',
+                'settings-auto-save-forms': 'Formulare automatisch speichern',
+                'notification-switched-to': 'Gewechselt zu: ',
+                'notification-dark-mode-on': 'Dunkler Modus aktiviert',
+                'notification-dark-mode-off': 'Dunkler Modus deaktiviert',
+                'notification-auto-expand-on': 'Automatische Erweiterung der Seitenleiste aktiviert',
+                'notification-auto-expand-off': 'Automatische Erweiterung der Seitenleiste deaktiviert',
+                'notification-animations-on': 'Animationen aktiviert',
+                'notification-animations-off': 'Animationen deaktiviert',
+                'notification-language-changed': 'Sprache geändert zu: ',
+                'notification-desktop-notifications-on': 'Desktop-Benachrichtigungen aktiviert',
+                'notification-desktop-notifications-off': 'Desktop-Benachrichtigungen deaktiviert',
+                'notification-sound-alerts-on': 'Sound-Warnungen aktiviert',
+                'notification-sound-alerts-off': 'Sound-Warnungen deaktiviert',
+                'notification-email-notifications-on': 'E-Mail-Benachrichtigungen aktiviert\nSie erhalten E-Mail-Erinnerungen',
+                'notification-email-notifications-off': 'E-Mail-Benachrichtigungen deaktiviert',
+                'notification-browsing-history-on': 'Speichern des Browserverlaufs aktiviert',
+                'notification-browsing-history-off': 'Speichern des Browserverlaufs deaktiviert',
+                'notification-auto-save-forms-on': 'Automatisches Speichern von Formularen aktiviert',
+                'notification-auto-save-forms-off': 'Automatisches Speichern von Formularen deaktiviert',
+                'notification-theme-changed': 'Gewechselt zu',
+                'notification-theme': 'Thema'
+            },
+            'ko-KR': {
+                'system-title': '관리 시스템',
+                'menu-home': '홈',
+                'menu-settings': '시스템 설정',
+                'home-welcome': '관리 시스템에 오신 것을 환영합니다',
+                'home-description': '이것은 접을 수 있는 사이드바가 있는 현대적인 인터페이스 디자인입니다',
+                'sidebar-title': '사이드바 기능',
+                'sidebar-description-1': '마우스를 왼쪽의 보라색 사이드바 위로 움직이면 자동으로 확장되어 전체 메뉴 항목이 표시됩니다.',
+                'sidebar-description-2': '마우스를 움직인 후 사이드바는 자동으로 접히고 아이콘만 표시되어 페이지 공간을 절약합니다.',
+                'design-title': '디자인 특징',
+                'design-feature-1': '<strong>1. 부드러운 애니메이션:</strong> CSS 전환을 사용하여 부드러운 확장 및 접기 효과를 구현합니다.',
+                'design-feature-2': '<strong>2. 그라데이션 배경:</strong> 사이드바는 보라색 그라데이션 디자인을 사용하여 더 현대적인 시각적 효과를 제공합니다.',
+                'design-feature-3': '<strong>3. 둥근 모서리 디자인:</strong> 오른쪽 둥근 모서리가 인터페이스를 더 부드럽고 아름답게 만듭니다.',
+                'design-feature-4': '<strong>4. 반응형 레이아웃:</strong> 다양한 화면 크기에 적응하며 모바일 장치에서도 잘 표시됩니다.',
+                'interaction-title': '인터랙티브 경험',
+                'interaction-description-1': '각 메뉴 항목에는 호버 효과가 있으며 클릭하면 약간의 크기 조절 피드백이 있습니다.',
+                'interaction-description-2': '메뉴 텍스트는 사이드바가 확장될 때 페이드인되고 접힐 때 페이드아웃됩니다.',
+                'interaction-description-3': '주요 콘텐츠 영역은 사이드바의 확장 상태에 따라 여백을 자동으로 조정합니다.',
+                'settings-title': '시스템 설정',
+                'settings-description': '여기서 시스템의 다양한 매개변수를 구성합니다',
+                'settings-interface': '인터페이스 설정',
+                'settings-dark-mode': '다크 모드',
+                'settings-auto-expand': '사이드바 자동 확장',
+                'settings-animations': '애니메이션 표시',
+                'settings-language': '언어 선택',
+                'settings-theme': '테마 색상',
+                'theme-light': '라이트 모드',
+                'theme-dark': '다크 모드',
+                'settings-notifications': '알림 설정',
+                'settings-desktop-notifications': '데스크톱 알림',
+                'settings-sound-alerts': '소리 알림',
+                'settings-email-notifications': '이메일 알림',
+                'settings-privacy': '개인정보 설정',
+                'settings-browsing-history': '브라우징 기록 저장',
+                'settings-auto-save-forms': '양식 자동 저장',
+                'notification-switched-to': '전환됨: ',
+                'notification-dark-mode-on': '다크 모드가 활성화되었습니다',
+                'notification-dark-mode-off': '다크 모드가 비활성화되었습니다',
+                'notification-auto-expand-on': '사이드바 자동 확장이 활성화되었습니다',
+                'notification-auto-expand-off': '사이드바 자동 확장이 비활성화되었습니다',
+                'notification-animations-on': '애니메이션이 활성화되었습니다',
+                'notification-animations-off': '애니메이션이 비활성화되었습니다',
+                'notification-language-changed': '언어가 변경되었습니다: ',
+                'notification-desktop-notifications-on': '데스크톱 알림이 활성화되었습니다',
+                'notification-desktop-notifications-off': '데스크톱 알림이 비활성화되었습니다',
+                'notification-sound-alerts-on': '소리 알림이 활성화되었습니다',
+                'notification-sound-alerts-off': '소리 알림이 비활성화되었습니다',
+                'notification-email-notifications-on': '이메일 알림이 활성화되었습니다\n이메일 알림을 받게 됩니다',
+                'notification-email-notifications-off': '이메일 알림이 비활성화되었습니다',
+                'notification-browsing-history-on': '브라우징 기록 저장이 활성화되었습니다',
+                'notification-browsing-history-off': '브라우징 기록 저장이 비활성화되었습니다',
+                'notification-auto-save-forms-on': '양식 자동 저장이 활성화되었습니다',
+                'notification-auto-save-forms-off': '양식 자동 저장이 비활성화되었습니다',
+                'notification-theme-changed': '전환됨',
+                'notification-theme': '테마'
+            },
+            'ru-RU': {
+                'system-title': 'Система Управления',
+                'menu-home': 'Главная',
+                'menu-settings': 'Настройки Системы',
+                'home-welcome': 'Добро пожаловать в Систему Управления',
+                'home-description': 'Это современный дизайн интерфейса со складной боковой панелью',
+                'sidebar-title': 'Функции Боковой Панели',
+                'sidebar-description-1': 'Переместите мышь на фиолетовую боковую панель слева, и она автоматически развернется, чтобы показать полные пункты меню.',
+                'sidebar-description-2': 'После перемещения мыши боковая панель автоматически свернется, показывая только значки для экономии места на странице.',
+                'design-title': 'Особенности Дизайна',
+                'design-feature-1': '<strong>1. Плавная Анимация:</strong> Используйте переход CSS для достижения плавных эффектов развертывания и свертывания.',
+                'design-feature-2': '<strong>2. Градиентный Фон:</strong> Боковая панель использует фиолетовый градиентный дизайн для более современного визуального эффекта.',
+                'design-feature-3': '<strong>3. Скругленные Углы:</strong> Правые скругленные углы делают интерфейс более мягким и красивым.',
+                'design-feature-4': '<strong>4. Адаптивный Макет:</strong> Адаптируется к различным размерам экрана и хорошо отображается на мобильных устройствах.',
+                'interaction-title': 'Интерактивный Опыт',
+                'interaction-description-1': 'Каждый пункт меню имеет эффект наведения, и при нажатии будет легкая обратная связь по масштабированию.',
+                'interaction-description-2': 'Текст меню будет плавно появляться при развертывании боковой панели и исчезать при ее свертывании.',
+                'interaction-description-3': 'Основная область контента будет автоматически регулировать отступы в зависимости от состояния развертывания боковой панели.',
+                'settings-title': 'Настройки Системы',
+                'settings-description': 'Настройте различные параметры системы здесь',
+                'settings-interface': 'Настройки Интерфейса',
+                'settings-dark-mode': 'Темный Режим',
+                'settings-auto-expand': 'Автоматическое Развертывание Боковой Панели',
+                'settings-animations': 'Показывать Анимации',
+                'settings-language': 'Выбор Языка',
+                'settings-theme': 'Цвет Темы',
+                'theme-light': 'Светлый Режим',
+                'theme-dark': 'Темный Режим',
+                'settings-notifications': 'Настройки Уведомлений',
+                'settings-desktop-notifications': 'Уведомления на Рабочем Столе',
+                'settings-sound-alerts': 'Звуковые Оповещения',
+                'settings-email-notifications': 'Email Уведомления',
+                'settings-privacy': 'Настройки Конфиденциальности',
+                'settings-browsing-history': 'Сохранять Историю Браузера',
+                'settings-auto-save-forms': 'Автоматическое Сохранение Форм',
+                'notification-switched-to': 'Переключено на: ',
+                'notification-dark-mode-on': 'Темный режим включен',
+                'notification-dark-mode-off': 'Темный режим выключен',
+                'notification-auto-expand-on': 'Автоматическое развертывание боковой панели включено',
+                'notification-auto-expand-off': 'Автоматическое развертывание боковой панели выключено',
+                'notification-animations-on': 'Анимации включены',
+                'notification-animations-off': 'Анимации выключены',
+                'notification-language-changed': 'Язык изменен на: ',
+                'notification-desktop-notifications-on': 'Уведомления на рабочем столе включены',
+                'notification-desktop-notifications-off': 'Уведомления на рабочем столе выключены',
+                'notification-sound-alerts-on': 'Звуковые оповещения включены',
+                'notification-sound-alerts-off': 'Звуковые оповещения выключены',
+                'notification-email-notifications-on': 'Email уведомления включены\nВы будете получать напоминания по электронной почте',
+                'notification-email-notifications-off': 'Email уведомления выключены',
+                'notification-browsing-history-on': 'Сохранение истории браузера включено',
+                'notification-browsing-history-off': 'Сохранение истории браузера выключено',
+                'notification-auto-save-forms-on': 'Автоматическое сохранение форм включено',
+                'notification-auto-save-forms-off': 'Автоматическое сохранение форм выключено',
+                'notification-theme-changed': 'Переключено на',
+                'notification-theme': 'тема'
+            }
+        };
+
+        // 主题颜色配置 - 重新排序，前4个适合浅色，后4个适合深色
+        const themes = [{
+                start: '#667eea',
+                end: '#764ba2',
+                accent: '#667eea',
+                name: '优雅紫'
+            }, // 浅色
+            {
+                start: '#4facfe',
+                end: '#00f2fe',
+                accent: '#4facfe',
+                name: '清新蓝'
+            }, // 浅色
+            {
+                start: '#43e97b',
+                end: '#38f9d7',
+                accent: '#43e97b',
+                name: '自然绿'
+            }, // 浅色
+            {
+                start: '#fa709a',
+                end: '#fee140',
+                accent: '#fa709a',
+                name: '活力橙'
+            }, // 浅色
+            {
+                start: '#f093fb',
+                end: '#f5576c',
+                accent: '#f093fb',
+                name: '魅惑粉'
+            }, // 深色
+            {
+                start: '#30cfd0',
+                end: '#330867',
+                accent: '#30cfd0',
+                name: '深邃蓝'
+            }, // 深色
+            {
+                start: '#a8edea',
+                end: '#fed6e3',
+                accent: '#a8edea',
+                name: '柔和青'
+            }, // 深色
+            {
+                start: '#ff9a9e',
+                end: '#fecfef',
+                accent: '#ff9a9e',
+                name: '浪漫粉'
+            } // 深色
+        ];
+
+        // 获取DOM元素
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const contentPages = document.querySelectorAll('.content-page');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const root = document.documentElement;
+        const darkModeCheckbox = document.getElementById('dark-mode');
+        const languageSelect = document.getElementById('language-select');
+
+        // 当前语言
+        let currentLanguage = 'zh-CN';
+
+        // 切换语言函数
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const translation = translations[lang];
+
+            // 更新所有带有data-i18n属性的元素
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translation[key]) {
+                    element.innerHTML = translation[key];
+                }
+            });
+
+            // 更新HTML的lang属性
+            document.documentElement.lang = lang;
+
+            // 保存语言设置
+            localStorage.setItem('selectedLanguage', lang);
+
+            // 更新语言选择框的值
+            languageSelect.value = lang;
+        }
+
+        // 为每个菜单链接添加点击事件
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetPage = this.getAttribute('data-page');
+
+                menuLinks.forEach(l => l.classList.remove('active'));
+                contentPages.forEach(p => p.classList.remove('active'));
+
+                this.classList.add('active');
+                document.getElementById(`${targetPage}-page`).classList.add('active');
+
+                const menuText = this.querySelector('.menu-text').textContent;
+                showNotification(`${translations[currentLanguage]['notification-switched-to']}${menuText}`);
+            });
+        });
+
+        // 深色模式切换 - 不自动更改主题颜色
+        darkModeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                showNotification(translations[currentLanguage]['notification-dark-mode-on']);
+            } else {
+                document.body.classList.remove('dark-mode');
+                showNotification(translations[currentLanguage]['notification-dark-mode-off']);
+            }
+
+            // 保存深色模式设置
+            saveDarkModeSetting();
+        });
+
+        // 保存深色模式设置函数
+        function saveDarkModeSetting() {
+            if (darkModeCheckbox.checked) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.removeItem('darkMode');
+            }
+        }
+
+        // 自动展开侧边栏切换
+        document.getElementById('auto-expand').addEventListener('change', function() {
+            if (this.checked) {
+                sidebarContainer.classList.remove('no-hover');
+                showNotification(translations[currentLanguage]['notification-auto-expand-on']);
+            } else {
+                sidebarContainer.classList.add('no-hover');
+                showNotification(translations[currentLanguage]['notification-auto-expand-off']);
+            }
+        });
+
+        // 动画效果切换
+        document.getElementById('animations').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.remove('no-animations');
+                showNotification(translations[currentLanguage]['notification-animations-on']);
+            } else {
+                document.body.classList.add('no-animations');
+                showNotification(translations[currentLanguage]['notification-animations-off']);
+            }
+        });
+
+        // 语言选择功能
+        languageSelect.addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            const selectedOption = this.options[this.selectedIndex].text;
+
+            // 切换语言
+            changeLanguage(selectedLanguage);
+
+            // 显示通知
+            showNotification(`${translations[currentLanguage]['notification-language-changed']}${selectedOption}`);
+        });
+
+        // 桌面通知切换
+        document.getElementById('desktop-notifications').addEventListener('change', function() {
+            if (this.checked) {
+                // 请求通知权限
+                if ('Notification' in window) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(translations[currentLanguage]['notification-desktop-notifications-on'], {
+                                body: translations[currentLanguage]['notification-desktop-notifications-on'],
+                                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7L12 12L22 7L12 2Z"></path><path d="M2 17L12 22L22 17"></path><path d="M2 12L12 17L22 12"></path></svg>'
+                            });
+                        }
+                    });
+                }
+                showNotification(translations[currentLanguage]['notification-desktop-notifications-on']);
+            } else {
+                showNotification(translations[currentLanguage]['notification-desktop-notifications-off']);
+            }
+        });
+
+        // 声音提醒切换
+        document.getElementById('sound-alerts').addEventListener('change', function() {
+            if (this.checked) {
+                // 播放提示音（使用Web Audio API创建简单提示音）
+                playNotificationSound();
+                showNotification(translations[currentLanguage]['notification-sound-alerts-on']);
+            } else {
+                showNotification(translations[currentLanguage]['notification-sound-alerts-off']);
+            }
+        });
+
+        // 邮件通知切换
+        document.getElementById('email-notifications').addEventListener('change', function() {
+            if (this.checked) {
+                showNotification(translations[currentLanguage]['notification-email-notifications-on']);
+            } else {
+                showNotification(translations[currentLanguage]['notification-email-notifications-off']);
+            }
+        });
+
+        // 保存浏览历史切换
+        document.getElementById('browsing-history').addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.setItem('browsingHistory', 'enabled');
+                showNotification(translations[currentLanguage]['notification-browsing-history-on']);
+            } else {
+                localStorage.removeItem('browsingHistory');
+                showNotification(translations[currentLanguage]['notification-browsing-history-off']);
+            }
+        });
+
+        // 自动保存表单切换
+        document.getElementById('auto-save-forms').addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.setItem('autoSaveForms', 'enabled');
+                showNotification(translations[currentLanguage]['notification-auto-save-forms-on']);
+            } else {
+                localStorage.removeItem('autoSaveForms');
+                showNotification(translations[currentLanguage]['notification-auto-save-forms-off']);
+            }
+        });
+
+        // 主题颜色选择
+        document.querySelectorAll('.theme-color').forEach(colorDiv => {
+            colorDiv.addEventListener('click', function() {
+                const themeIndex = parseInt(this.getAttribute('data-theme'));
+                switchToTheme(themeIndex);
+            });
+        });
+
+        // 切换主题函数 - 自动切换深/浅色模式
+        function switchToTheme(themeIndex) {
+            const theme = themes[themeIndex];
+
+            // 更新CSS变量
+            root.style.setProperty('--primary-start', theme.start);
+            root.style.setProperty('--primary-end', theme.end);
+            root.style.setProperty('--accent-color', theme.accent);
+
+            // 更新活动状态
+            document.querySelectorAll('.theme-color').forEach(div => div.classList.remove('active'));
+            document.querySelector(`[data-theme="${themeIndex}"]`).classList.add('active');
+
+            // 保存主题选择
+            localStorage.setItem('selectedTheme', themeIndex);
+
+            // 根据主题类型自动切换深色模式
+            // 0-3是浅色主题，4-7是深色主题
+            const isDarkTheme = themeIndex >= 4;
+
+            if (isDarkTheme && !darkModeCheckbox.checked) {
+                // 如果是深色主题但当前不是深色模式，自动开启
+                darkModeCheckbox.checked = true;
+                document.body.classList.add('dark-mode');
+                saveDarkModeSetting();
+            } else if (!isDarkTheme && darkModeCheckbox.checked) {
+                // 如果是浅色主题但当前是深色模式，自动关闭
+                darkModeCheckbox.checked = false;
+                document.body.classList.remove('dark-mode');
+                saveDarkModeSetting();
+            }
+
+            showNotification(`${translations[currentLanguage]['notification-theme-changed']}${theme.name}${translations[currentLanguage]['notification-theme']}`);
+        }
+
+        // 播放提示音函数
+        function playNotificationSound() {
+            const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // 显示通知函数
+        function showNotification(message) {
+            // 移除已存在的通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // 创建新通知
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // 3秒后移除通知
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // 页面加载时恢复设置
+        window.addEventListener('load', function() {
+            // 恢复深色模式
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeCheckbox.checked = true;
+            }
+
+            // 恢复自动展开侧边栏设置
+            if (localStorage.getItem('autoExpand') === 'disabled') {
+                sidebarContainer.classList.add('no-hover');
+                document.getElementById('auto-expand').checked = false;
+            }
+
+            // 恢复主题颜色
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme !== null) {
+                const themeIndex = parseInt(savedTheme);
+                switchToTheme(themeIndex);
+            }
+
+            // 恢复语言设置
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage) {
+                changeLanguage(savedLanguage);
+            }
+        });
+
+        // 保存自动展开侧边栏设置
+        document.getElementById('auto-expand').addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.removeItem('autoExpand');
+            } else {
+                localStorage.setItem('autoExpand', 'disabled');
+            }
+        });
+
+        // 添加 slideOut 动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
