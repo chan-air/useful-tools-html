@@ -1,0 +1,3279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实用小工具</title>
+    <style>
+         :root {
+            /* 默认主题颜色 */
+            --primary-start: #667eea;
+            --primary-end: #764ba2;
+            --accent-color: #667eea;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* 深色模式样式 */
+        
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .content-card,
+        body.dark-mode .page-header,
+        body.dark-mode .tool-card {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .content-card h2,
+        body.dark-mode .page-header h1,
+        body.dark-mode .page-header p,
+        body.dark-mode .tool-card h3 {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .content-card p,
+        body.dark-mode .tool-card p {
+            color: #cccccc;
+        }
+        
+        body.dark-mode .settings-group h3 {
+            color: #ffffff;
+            border-bottom-color: #444444;
+        }
+        
+        body.dark-mode .setting-item {
+            border-bottom-color: #333333;
+        }
+        
+        body.dark-mode .setting-label {
+            color: #e0e0e0;
+        }
+        /* 深色模式下工具卡片内部元素样式 */
+        
+        body.dark-mode .calc-display {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .calc-btn {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .calc-btn:hover {
+            background-color: #4a4a4a;
+        }
+        
+        body.dark-mode .calc-btn.operator {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        body.dark-mode .calc-btn.operator:hover {
+            background-color: #5a67d8;
+        }
+        
+        body.dark-mode .calc-btn.equals {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        
+        body.dark-mode .calc-btn.equals:hover {
+            background-color: #218838;
+        }
+        
+        body.dark-mode .calc-btn.clear {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        body.dark-mode .calc-btn.clear:hover {
+            background-color: #c82333;
+        }
+        
+        body.dark-mode .timer-display {
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .timer-btn {
+            background-color: var(--accent-color);
+        }
+        
+        body.dark-mode .timer-btn:hover {
+            background-color: #5a67d8;
+        }
+        
+        body.dark-mode .timer-btn.stop {
+            background-color: #dc3545;
+        }
+        
+        body.dark-mode .timer-btn.stop:hover {
+            background-color: #c82333;
+        }
+        
+        body.dark-mode .timer-lap {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .color-preview {
+            border-color: #555555;
+        }
+        
+        body.dark-mode .color-input-group label {
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .color-input {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .color-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        
+        body.dark-mode .color-value {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .text-input-group label {
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .text-input {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .text-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        
+        body.dark-mode .text-output {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        
+        body.dark-mode .text-action-btn {
+            background-color: var(--accent-color);
+        }
+        
+        body.dark-mode .text-action-btn:hover {
+            background-color: #5a67d8;
+        }
+        /* 禁用动画时的样式 */
+        
+        body.no-animations * {
+            animation: none !important;
+            transition: none !important;
+        }
+        /* 侧边栏容器 */
+        
+        .sidebar-container {
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+        /* LTR模式下的侧边栏位置 */
+        
+        html[dir="ltr"] .sidebar-container {
+            left: 0;
+        }
+        /* RTL模式下的侧边栏位置 */
+        
+        html[dir="rtl"] .sidebar-container {
+            right: 0;
+        }
+        /* 侧边栏主体 */
+        
+        .sidebar {
+            width: 60px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        /* LTR模式下的侧边栏圆角 */
+        
+        html[dir="ltr"] .sidebar {
+            border-radius: 0 10px 10px 0;
+        }
+        /* RTL模式下的侧边栏圆角 */
+        
+        html[dir="rtl"] .sidebar {
+            border-radius: 10px 0 0 10px;
+        }
+        /* 鼠标悬停时展开 - 可通过设置控制 */
+        
+        .sidebar-container:hover .sidebar {
+            width: 250px;
+        }
+        
+        .sidebar-container.no-hover:hover .sidebar {
+            width: 60px;
+        }
+        /* 菜单项容器 */
+        
+        .menu-items {
+            padding: 0;
+            list-style: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Logo菜单项 */
+        
+        .logo-item {
+            position: relative;
+            margin: 0;
+            height: 60px;
+        }
+        
+        .logo-link {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: default;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sidebar-container:hover .logo-link {
+            padding: 0 20px;
+        }
+        
+        .sidebar-container.no-hover:hover .logo-link {
+            padding: 0;
+        }
+        /* 单个菜单项 */
+        
+        .menu-item {
+            position: relative;
+            margin: 0;
+        }
+        /* 首页菜单项添加上边距 */
+        
+        .menu-item:first-of-type {
+            margin-top: 10px;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            width: 100%;
+            height: 60px;
+        }
+        
+        .sidebar-container:hover .menu-link {
+            padding: 0 20px;
+        }
+        
+        .sidebar-container.no-hover:hover .menu-link {
+            padding: 0;
+        }
+        
+        .menu-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        
+        .menu-link:active {
+            transform: scale(0.98);
+        }
+        /* 图标容器 */
+        
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: absolute;
+            transition: all 0.3s ease;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        /* LTR模式下的图标位置 */
+        
+        html[dir="ltr"] .menu-icon {
+            left: 10px;
+        }
+        
+        html[dir="ltr"] .sidebar-container:hover .menu-icon {
+            left: 20px;
+        }
+        
+        html[dir="ltr"] .sidebar-container.no-hover:hover .menu-icon {
+            left: 10px;
+        }
+        /* RTL模式下的图标位置 */
+        
+        html[dir="rtl"] .menu-icon {
+            right: 10px;
+        }
+        
+        html[dir="rtl"] .sidebar-container:hover .menu-icon {
+            right: 20px;
+        }
+        
+        html[dir="rtl"] .sidebar-container.no-hover:hover .menu-icon {
+            right: 10px;
+        }
+        /* SVG图标样式 */
+        
+        .menu-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* Logo图标特殊样式 */
+        
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 1.5;
+        }
+        /* 菜单文本 */
+        
+        .menu-text {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            pointer-events: none;
+        }
+        /* LTR模式下的菜单文本位置 */
+        
+        html[dir="ltr"] .menu-text {
+            left: 70px;
+            transform: translateX(-10px);
+        }
+        
+        html[dir="ltr"] .sidebar-container:hover .menu-text {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
+        
+        html[dir="ltr"] .sidebar-container.no-hover:hover .menu-text {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        /* RTL模式下的菜单文本位置 */
+        
+        html[dir="rtl"] .menu-text {
+            right: 70px;
+            transform: translateX(10px);
+        }
+        
+        html[dir="rtl"] .sidebar-container:hover .menu-text {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
+        
+        html[dir="rtl"] .sidebar-container.no-hover:hover .menu-text {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        /* Logo文本特殊样式 */
+        
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        /* 主内容区域 */
+        
+        .main-content {
+            padding: 40px;
+            min-height: 100vh;
+            transition: margin 0.3s ease;
+        }
+        /* LTR模式下的内容区域边距 */
+        
+        html[dir="ltr"] .main-content {
+            margin-left: 60px;
+            margin-right: 0;
+        }
+        
+        html[dir="ltr"] .sidebar-container:hover~.main-content {
+            margin-left: 250px;
+            margin-right: 0;
+        }
+        
+        html[dir="ltr"] .sidebar-container.no-hover:hover~.main-content {
+            margin-left: 60px;
+            margin-right: 0;
+        }
+        /* RTL模式下的内容区域边距 */
+        
+        html[dir="rtl"] .main-content {
+            margin-right: 60px;
+            margin-left: 0;
+        }
+        
+        html[dir="rtl"] .sidebar-container:hover~.main-content {
+            margin-right: 250px;
+            margin-left: 0;
+        }
+        
+        html[dir="rtl"] .sidebar-container.no-hover:hover~.main-content {
+            margin-right: 60px;
+            margin-left: 0;
+        }
+        /* 内容页面 */
+        
+        .content-page {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .content-page.active {
+            display: block;
+        }
+        /* 内容卡片 */
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .content-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+        
+        .content-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        /* 顶部标题 */
+        
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+        
+        .page-header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        /* 工具卡片网格 */
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        /* 工具卡片 */
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-card-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+            color: white;
+        }
+        
+        .tool-card h3 {
+            color: white;
+            font-size: 16px;
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+        
+        .tool-card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            margin: 2px 0 0;
+            transition: color 0.3s ease;
+        }
+        
+        .tool-card-content {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .tool-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* 计算器样式 */
+        
+        .calculator {
+            width: 100%;
+        }
+        
+        .calc-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        .calc-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calc-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .calc-btn.operator {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .calc-btn.operator:hover {
+            background: #5a67d8;
+        }
+        
+        .calc-btn.equals {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .calc-btn.equals:hover {
+            background: #218838;
+        }
+        
+        .calc-btn.clear {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .calc-btn.clear:hover {
+            background: #c82333;
+        }
+        /* 计时器样式 */
+        
+        .timer-display {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .timer-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .timer-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .timer-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .timer-btn.stop {
+            background: #dc3545;
+        }
+        
+        .timer-btn.stop:hover {
+            background: #c82333;
+        }
+        
+        .timer-laps {
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .timer-lap {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        /* 颜色转换器样式 */
+        
+        .color-converter {
+            width: 100%;
+        }
+        
+        .color-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .color-input-group {
+            margin-bottom: 8px;
+        }
+        
+        .color-input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #333;
+            font-size: 12px;
+        }
+        
+        .color-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .color-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .color-input.error {
+            border-color: #dc3545;
+            animation: shake 0.3s;
+        }
+        
+        .color-values {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+        
+        .color-value {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+        }
+        /* 文本工具样式 */
+        
+        .text-tools {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .text-input-group {
+            margin-bottom: 8px;
+        }
+        
+        .text-input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #333;
+            font-size: 12px;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: border-color 0.3s ease;
+            resize: none;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .text-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px;
+            min-height: 60px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.3;
+            flex: 1;
+        }
+        
+        .text-actions {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            flex-wrap: nowrap;
+            /* 防止按钮换行 */
+            overflow: hidden;
+            /* 隐藏超出部分 */
+        }
+        
+        .text-action-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            /* 让按钮平均分配空间 */
+            min-width: 0;
+            /* 允许按钮缩小到最小宽度 */
+            white-space: nowrap;
+            /* 防止按钮文字换行 */
+            overflow: hidden;
+            /* 隐藏超出部分 */
+            text-overflow: ellipsis;
+            /* 超出部分显示省略号 */
+        }
+        
+        .text-action-btn:hover {
+            background: #5a67d8;
+        }
+        /* 设置页面样式 */
+        
+        .settings-group {
+            margin-bottom: 30px;
+        }
+        
+        .settings-group h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: border-color 0.3s ease;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .setting-control {
+            display: flex;
+            align-items: center;
+        }
+        /* 开关按钮 */
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+        /* 主题颜色选择器 */
+        
+        .theme-section {
+            margin-bottom: 15px;
+        }
+        
+        .theme-section-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .theme-colors {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .theme-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-color:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-color.active {
+            border-color: #333;
+        }
+        
+        .theme-color.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+        /* 美化的语言选择器样式 */
+        
+        .language-selector {
+            position: relative;
+            min-width: 180px;
+        }
+        
+        .language-select {
+            width: 100%;
+            padding: 10px 15px;
+            padding-right: 40px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .language-select:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        body.dark-mode .language-select {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            border-color: #555;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        body.dark-mode .language-select:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-mode .language-select:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        /* 通知样式 */
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 3000;
+            max-width: 300px;
+            border-left: 4px solid var(--accent-color);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        /* LTR模式下的通知位置 */
+        
+        html[dir="ltr"] .notification {
+            right: 20px;
+            left: auto;
+        }
+        /* RTL模式下的通知位置 */
+        
+        html[dir="rtl"] .notification {
+            left: 20px;
+            right: auto;
+        }
+        
+        body.dark-mode .notification {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        /* 响应式设计 */
+        
+        @media (max-width: 768px) {
+            .sidebar-container:hover .sidebar {
+                width: 200px;
+            }
+            html[dir="ltr"] .sidebar-container:hover~.main-content {
+                margin-left: 200px;
+            }
+            html[dir="rtl"] .sidebar-container:hover~.main-content {
+                margin-right: 200px;
+            }
+            html[dir="ltr"] .main-content {
+                margin-left: 60px;
+                padding: 20px;
+            }
+            html[dir="rtl"] .main-content {
+                margin-right: 60px;
+                padding: 20px;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            /* 文本工具按钮在窄屏幕下的特殊处理 */
+            .text-action-btn {
+                padding: 6px 4px;
+                /* 减小内边距 */
+                font-size: 10px;
+                /* 减小字体大小 */
+            }
+        }
+        /* 更窄屏幕的额外处理 */
+        
+        @media (max-width: 480px) {
+            .text-action-btn {
+                padding: 4px 2px;
+                /* 进一步减小内边距 */
+                font-size: 9px;
+                /* 进一步减小字体大小 */
+            }
+        }
+        /* 动画效果 */
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLTR {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRTL {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideOutLTR {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes slideOutRTL {
+            to {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+        }
+        
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+        /* 根据方向应用不同的动画 */
+        
+        html[dir="ltr"] .notification {
+            animation: slideInLTR 0.3s ease-out;
+        }
+        
+        html[dir="rtl"] .notification {
+            animation: slideInRTL 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 侧边栏容器 -->
+    <div class="sidebar-container" id="sidebarContainer">
+        <nav class="sidebar">
+            <ul class="menu-items">
+                <!-- Logo位置 -->
+                <li class="logo-item">
+                    <a href="#" class="logo-link">
+                        <span class="menu-icon logo-icon">
+                            <!-- Logo图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                                <path d="M2 17L12 22L22 17"></path>
+                                <path d="M2 12L12 17L22 12"></path>
+                            </svg>
+                        </span>
+                        <span class="menu-text logo-text" data-i18n="system-title">实用小工具</span>
+                    </a>
+                </li>
+
+                <!-- 首页菜单项 -->
+                <li class="menu-item">
+                    <a href="#" class="menu-link active" data-page="home">
+                        <span class="menu-icon">
+                            <!-- 首页图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </span>
+                        <span class="menu-text" data-i18n="menu-home">首页</span>
+                    </a>
+                </li>
+
+                <!-- 设置菜单项 -->
+                <li class="menu-item">
+                    <a href="#" class="menu-link" data-page="settings">
+                        <span class="menu-icon">
+                            <!-- 设置图标 SVG -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5A3.5 3.5 0 0 1 15.5 12A3.5 3.5 0 0 1 12 15.5M19.43 12.97C19.47 12.65 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.27 4.96 19.05 5.05L16.56 6.05C16.04 5.66 15.5 5.32 14.87 5.07L14.5 2.42C14.46 2.18 14.25 2 14 2H10C9.75 2 9.54 2.18 9.5 2.42L9.13 5.07C8.5 5.32 7.96 5.66 7.44 6.05L4.95 5.05C4.73 4.96 4.46 5.05 4.34 5.27L2.34 8.73C2.21 8.95 2.27 9.22 2.46 9.37L4.57 11C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.65 4.57 12.97L2.46 14.63C2.27 14.78 2.21 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.73 19.03 4.95 18.95L7.44 17.94C7.96 18.34 8.5 18.68 9.13 18.93L9.5 21.58C9.54 21.82 9.75 22 10 22H14C14.25 22 14.46 21.82 14.5 21.58L14.87 18.93C15.5 18.67 16.04 18.34 16.56 17.94L19.05 18.95C19.27 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.97Z"></path>
+                            </svg>
+                        </span>
+                        <span class="menu-text" data-i18n="menu-settings">系统设置</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 首页内容 -->
+        <div id="home-page" class="content-page active">
+            <div class="page-header">
+                <h1 data-i18n="home-welcome">实用小工具集合</h1>
+                <p data-i18n="home-description">这里提供了一些日常实用的在线小工具，方便您快速完成各种计算和转换任务</p>
+            </div>
+
+            <!-- 工具卡片网格 -->
+            <div class="tools-grid">
+                <!-- 计算器卡片 -->
+                <div class="tool-card">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                                <line x1="8" y1="6" x2="16" y2="6"></line>
+                                <line x1="8" y1="10" x2="16" y2="10"></line>
+                                <line x1="8" y1="14" x2="16" y2="14"></line>
+                                <line x1="8" y1="18" x2="12" y2="18"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 data-i18n="tool-calculator">计算器</h3>
+                            <p data-i18n="tool-calculator-desc">支持基本四则运算的科学计算器</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-content">
+                        <div class="calculator">
+                            <div class="calc-display" id="calc-display">0</div>
+                            <div class="calc-buttons">
+                                <button class="calc-btn clear" onclick="clearCalculator()" data-i18n="calc-clear">清除</button>
+                                <button class="calc-btn operator" onclick="setOperation('/')">÷</button>
+                                <button class="calc-btn operator" onclick="setOperation('*')">×</button>
+                                <button class="calc-btn operator" onclick="deleteLast()">←</button>
+
+                                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+                                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+                                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+                                <button class="calc-btn operator" onclick="setOperation('-')">-</button>
+
+                                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+                                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+                                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+                                <button class="calc-btn operator" onclick="setOperation('+')">+</button>
+
+                                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+                                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+                                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+                                <button class="calc-btn operator" onclick="appendToDisplay('.')">.</button>
+
+                                <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
+                                <button class="calc-btn" onclick="appendToDisplay('00')">00</button>
+                                <button class="calc-btn equals" onclick="calculateResult()" data-i18n="calc-equals">=</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 计时器卡片 -->
+                <div class="tool-card">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 data-i18n="tool-timer">计时器</h3>
+                            <p data-i18n="tool-timer-desc">精确的秒表计时器，支持分段计时</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-content">
+                        <div class="timer-display" id="timer-display">00:00:00</div>
+                        <div class="timer-controls">
+                            <button class="timer-btn" id="timer-start" onclick="startTimer()" data-i18n="timer-start">开始</button>
+                            <button class="timer-btn stop" id="timer-stop" onclick="stopTimer()" style="display: none;" data-i18n="timer-stop">停止</button>
+                            <button class="timer-btn" onclick="resetTimer()" data-i18n="timer-reset">重置</button>
+                            <button class="timer-btn" onclick="recordLap()" data-i18n="timer-lap">计次</button>
+                        </div>
+                        <div class="timer-laps" id="timer-laps"></div>
+                    </div>
+                </div>
+
+                <!-- 颜色转换器卡片 -->
+                <div class="tool-card">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2v20M17 7l-5 5-5-5M17 17l-5-5-5 5"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 data-i18n="tool-color-converter">颜色转换器</h3>
+                            <p data-i18n="tool-color-converter-desc">RGB、HEX、HSL颜色格式互转</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-content">
+                        <div class="color-converter">
+                            <div class="color-preview" id="color-preview"></div>
+                            <div class="color-input-group">
+                                <label for="hex-input" data-i18n="color-hex">HEX</label>
+                                <input type="text" id="hex-input" class="color-input" placeholder="#RRGGBB" onchange="updateFromHex()">
+                            </div>
+                            <div class="color-input-group">
+                                <label for="rgb-input" data-i18n="color-rgb">RGB</label>
+                                <input type="text" id="rgb-input" class="color-input" placeholder="rgb(r, g, b)" onchange="updateFromRgb()">
+                            </div>
+                            <div class="color-input-group">
+                                <label for="hsl-input" data-i18n="color-hsl">HSL</label>
+                                <input type="text" id="hsl-input" class="color-input" placeholder="hsl(h, s%, l%)" onchange="updateFromHsl()">
+                            </div>
+                            <div class="color-values">
+                                <div class="color-value" id="hex-value">HEX: #000000</div>
+                                <div class="color-value" id="rgb-value">RGB: rgb(0, 0, 0)</div>
+                                <div class="color-value" id="hsl-value">HSL: hsl(0, 0%, 0%)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文本工具卡片 -->
+                <div class="tool-card">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                                <line x1="9" y1="20" x2="15" y2="20"></line>
+                                <line x1="12" y1="4" x2="12" y2="20"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 data-i18n="tool-text-tools">文本工具</h3>
+                            <p data-i18n="tool-text-tools-desc">文本大小写转换、统计字符数等</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-content">
+                        <div class="text-tools">
+                            <div class="text-actions">
+                                <button class="text-action-btn" onclick="transformText('uppercase')" data-i18n="text-uppercase">转大写</button>
+                                <button class="text-action-btn" onclick="transformText('lowercase')" data-i18n="text-lowercase">转小写</button>
+                                <button class="text-action-btn" onclick="transformText('capitalize')" data-i18n="text-capitalize">首字母大写</button>
+                                <button class="text-action-btn" onclick="transformText('reverse')" data-i18n="text-reverse">反转文本</button>
+                                <button class="text-action-btn" onclick="countText()" data-i18n="text-count">统计字符</button>
+                            </div>
+                            <div class="text-input-group">
+                                <label for="text-input" data-i18n="text-input-label">输入文本</label>
+                                <textarea id="text-input" class="text-input" rows="3" placeholder="在此输入文本..." oninput="autoUpdateText()"></textarea>
+                            </div>
+                            <div class="text-input-group">
+                                <label data-i18n="text-output-label">处理结果</label>
+                                <div id="text-output" class="text-output"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置页面内容 -->
+        <div id="settings-page" class="content-page">
+            <div class="page-header">
+                <h1 data-i18n="settings-title">系统设置</h1>
+                <p data-i18n="settings-description">在这里配置系统的各项参数</p>
+            </div>
+            <div class="content-card">
+                <div class="settings-group">
+                    <h3 data-i18n="settings-interface">界面设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-dark-mode">深色模式</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-auto-expand">自动展开侧边栏</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-expand" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-animations">显示动画效果</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="animations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-language">语言选择</span>
+                        <div class="setting-control">
+                            <div class="language-selector">
+                                <select class="language-select" id="language-select">
+                                    <option value="zh-CN">中文（简体）</option>
+                                    <option value="zh-TW">中文（繁體）</option>
+                                    <option value="zh-HK">中文（粵語）</option>
+                                    <option value="zh-CL">中文（文言文）</option>
+                                    <option value="ko-KP">조선말</option>
+                                    <option value="ar-SA">العربية</option>
+                                    <option value="en-US">English</option>
+                                    <option value="ja-JP">日本語</option>
+                                    <option value="es-ES">Español</option>
+                                    <option value="fr-FR">Français</option>
+                                    <option value="de-DE">Deutsch</option>
+                                    <option value="ko-KR">한국어</option>
+                                    <option value="ru-RU">Русский</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-theme">主题颜色</span>
+                        <div class="setting-control">
+                            <div>
+                                <!-- 浅色模式主题 -->
+                                <div class="theme-section">
+                                    <div class="theme-section-title" data-i18n="theme-light">浅色模式</div>
+                                    <div class="theme-colors">
+                                        <div class="theme-color active" data-theme="0" style="background: linear-gradient(135deg, #667eea, #764ba2)" title="优雅紫"></div>
+                                        <div class="theme-color" data-theme="1" style="background: linear-gradient(135deg, #4facfe, #00f2fe)" title="清新蓝"></div>
+                                        <div class="theme-color" data-theme="2" style="background: linear-gradient(135deg, #43e97b, #38f9d7)" title="自然绿"></div>
+                                        <div class="theme-color" data-theme="3" style="background: linear-gradient(135deg, #fa709a, #fee140)" title="活力橙"></div>
+                                    </div>
+                                </div>
+
+                                <!-- 深色模式主题 -->
+                                <div class="theme-section">
+                                    <div class="theme-section-title" data-i18n="theme-dark">深色模式</div>
+                                    <div class="theme-colors">
+                                        <div class="theme-color" data-theme="4" style="background: linear-gradient(135deg, #f093fb, #f5576c)" title="魅惑粉"></div>
+                                        <div class="theme-color" data-theme="5" style="background: linear-gradient(135deg, #30cfd0, #330867)" title="深邃蓝"></div>
+                                        <div class="theme-color" data-theme="6" style="background: linear-gradient(135deg, #a8edea, #fed6e3)" title="柔和青"></div>
+                                        <div class="theme-color" data-theme="7" style="background: linear-gradient(135deg, #ff9a9e, #fecfef)" title="浪漫粉"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 data-i18n="settings-notifications">通知设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-desktop-notifications">桌面通知</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="desktop-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-sound-alerts">声音提醒</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="sound-alerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-email-notifications">邮件通知</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3 data-i18n="settings-privacy">隐私设置</h3>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-browsing-history">保存浏览历史</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="browsing-history" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label" data-i18n="settings-auto-save-forms">自动保存表单</span>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-save-forms">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // 多语言支持
+        const translations = {
+            'zh-CN': {
+                'system-title': '实用小工具',
+                'menu-home': '首页',
+                'menu-settings': '系统设置',
+                'home-welcome': '实用小工具集合',
+                'home-description': '这里提供了一些日常实用的在线小工具，方便您快速完成各种计算和转换任务',
+                'tool-calculator': '计算器',
+                'tool-calculator-desc': '支持基本四则运算的科学计算器',
+                'tool-timer': '计时器',
+                'tool-timer-desc': '精确的秒表计时器，支持分段计时',
+                'tool-color-converter': '颜色转换器',
+                'tool-color-converter-desc': 'RGB、HEX、HSL颜色格式互转',
+                'tool-text-tools': '文本工具',
+                'tool-text-tools-desc': '文本大小写转换、统计字符数等',
+                'settings-title': '系统设置',
+                'settings-description': '在这里配置系统的各项参数',
+                'settings-interface': '界面设置',
+                'settings-dark-mode': '深色模式',
+                'settings-auto-expand': '自动展开侧边栏',
+                'settings-animations': '显示动画效果',
+                'settings-language': '语言选择',
+                'settings-theme': '主题颜色',
+                'theme-light': '浅色模式',
+                'theme-dark': '深色模式',
+                'settings-notifications': '通知设置',
+                'settings-desktop-notifications': '桌面通知',
+                'settings-sound-alerts': '声音提醒',
+                'settings-email-notifications': '邮件通知',
+                'settings-privacy': '隐私设置',
+                'settings-browsing-history': '保存浏览历史',
+                'settings-auto-save-forms': '自动保存表单',
+                'notification-switched-to': '已切换到：',
+                'notification-dark-mode-on': '深色模式已开启',
+                'notification-dark-mode-off': '深色模式已关闭',
+                'notification-auto-expand-on': '自动展开侧边栏已开启',
+                'notification-auto-expand-off': '自动展开侧边栏已关闭',
+                'notification-animations-on': '动画效果已开启',
+                'notification-animations-off': '动画效果已关闭',
+                'notification-language-changed': '语言已切换为：',
+                'notification-desktop-notifications-on': '桌面通知已开启',
+                'notification-desktop-notifications-off': '桌面通知已关闭',
+                'notification-sound-alerts-on': '声音提醒已开启',
+                'notification-sound-alerts-off': '声音提醒已关闭',
+                'notification-email-notifications-on': '邮件通知已开启\n您将收到邮件提醒',
+                'notification-email-notifications-off': '邮件通知已关闭',
+                'notification-browsing-history-on': '浏览历史保存已开启',
+                'notification-browsing-history-off': '浏览历史保存已关闭',
+                'notification-auto-save-forms-on': '表单自动保存已开启',
+                'notification-auto-save-forms-off': '表单自动保存已关闭',
+                'notification-theme-changed': '已切换到',
+                'notification-theme': '主题',
+                'calc-0': '0',
+                'calc-clear': '清除',
+                'calc-equals': '=',
+                'timer-start': '开始',
+                'timer-stop': '停止',
+                'timer-reset': '重置',
+                'timer-lap': '计次',
+                'timer-laps-title': '计次记录',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '转大写',
+                'text-lowercase': '转小写',
+                'text-capitalize': '首字母大写',
+                'text-reverse': '反转文本',
+                'text-count': '统计字符',
+                'text-input-label': '输入文本',
+                'text-output-label': '处理结果',
+                'text-words': '字数',
+                'text-characters': '字符数',
+                'text-spaces': '空格数'
+            },
+            'zh-TW': {
+                'system-title': '實用小工具',
+                'menu-home': '首頁',
+                'menu-settings': '系統設定',
+                'home-welcome': '實用小工具集合',
+                'home-description': '這裡提供了一些日常實用的在線小工具，方便您快速完成各種計算和轉換任務',
+                'tool-calculator': '計算器',
+                'tool-calculator-desc': '支持基本四則運算的科學計算器',
+                'tool-timer': '計時器',
+                'tool-timer-desc': '精確的秒錶計時器，支持分段計時',
+                'tool-color-converter': '顏色轉換器',
+                'tool-color-converter-desc': 'RGB、HEX、HSL顏色格式互轉',
+                'tool-text-tools': '文本工具',
+                'tool-text-tools-desc': '文本大小寫轉換、統計字符數等',
+                'settings-title': '系統設定',
+                'settings-description': '在這裡配置系統的各項參數',
+                'settings-interface': '介面設定',
+                'settings-dark-mode': '深色模式',
+                'settings-auto-expand': '自動展開側邊欄',
+                'settings-animations': '顯示動畫效果',
+                'settings-language': '語言選擇',
+                'settings-theme': '主題顏色',
+                'theme-light': '淺色模式',
+                'theme-dark': '深色模式',
+                'settings-notifications': '通知設定',
+                'settings-desktop-notifications': '桌面通知',
+                'settings-sound-alerts': '聲音提醒',
+                'settings-email-notifications': '郵件通知',
+                'settings-privacy': '隱私設定',
+                'settings-browsing-history': '保存瀏覽歷史',
+                'settings-auto-save-forms': '自動保存表單',
+                'notification-switched-to': '已切換到：',
+                'notification-dark-mode-on': '深色模式已開啟',
+                'notification-dark-mode-off': '深色模式已關閉',
+                'notification-auto-expand-on': '自動展開側邊欄已開啟',
+                'notification-auto-expand-off': '自動展開側邊欄已關閉',
+                'notification-animations-on': '動畫效果已開啟',
+                'notification-animations-off': '動畫效果已關閉',
+                'notification-language-changed': '語言已切換為：',
+                'notification-desktop-notifications-on': '桌面通知已開啟',
+                'notification-desktop-notifications-off': '桌面通知已關閉',
+                'notification-sound-alerts-on': '聲音提醒已開啟',
+                'notification-sound-alerts-off': '聲音提醒已關閉',
+                'notification-email-notifications-on': '郵件通知已開啟\n您將收到郵件提醒',
+                'notification-email-notifications-off': '郵件通知已關閉',
+                'notification-browsing-history-on': '瀏覽歷史保存已開啟',
+                'notification-browsing-history-off': '瀏覽歷史保存已關閉',
+                'notification-auto-save-forms-on': '表單自動保存已開啟',
+                'notification-auto-save-forms-off': '表單自動保存已關閉',
+                'notification-theme-changed': '已切換到',
+                'notification-theme': '主題',
+                'calc-0': '0',
+                'calc-clear': '清除',
+                'calc-equals': '=',
+                'timer-start': '開始',
+                'timer-stop': '停止',
+                'timer-reset': '重置',
+                'timer-lap': '計次',
+                'timer-laps-title': '計次記錄',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '轉大寫',
+                'text-lowercase': '轉小寫',
+                'text-capitalize': '首字母大寫',
+                'text-reverse': '反轉文本',
+                'text-count': '統計字符',
+                'text-input-label': '輸入文本',
+                'text-output-label': '處理結果',
+                'text-words': '字數',
+                'text-characters': '字符數',
+                'text-spaces': '空格數'
+            },
+            'zh-HK': {
+                'system-title': '實用小工具',
+                'menu-home': '主頁',
+                'menu-settings': '系統設定',
+                'home-welcome': '實用小工具集合',
+                'home-description': '呢度提供咗一啲日常實用嘅在線小工具，方便你快速完成各種計算同轉換任務',
+                'tool-calculator': '計算機',
+                'tool-calculator-desc': '支持基本四則運算嘅科學計算機',
+                'tool-timer': '計時器',
+                'tool-timer-desc': '精確嘅秒錶計時器，支持分段計時',
+                'tool-color-converter': '顏色轉換器',
+                'tool-color-converter-desc': 'RGB、HEX、HSL顏色格式互轉',
+                'tool-text-tools': '文本工具',
+                'tool-text-tools-desc': '文本大小寫轉換、統計字符數等',
+                'settings-title': '系統設定',
+                'settings-description': '喺呢度配置系統嘅各項參數',
+                'settings-interface': '介面設定',
+                'settings-dark-mode': '深色模式',
+                'settings-auto-expand': '自動展開側邊欄',
+                'settings-animations': '顯示動畫效果',
+                'settings-language': '語言選擇',
+                'settings-theme': '主題顏色',
+                'theme-light': '淺色模式',
+                'theme-dark': '深色模式',
+                'settings-notifications': '通知設定',
+                'settings-desktop-notifications': '桌面通知',
+                'settings-sound-alerts': '聲音提醒',
+                'settings-email-notifications': '郵件通知',
+                'settings-privacy': '私隱設定',
+                'settings-browsing-history': '保存瀏覽歷史',
+                'settings-auto-save-forms': '自動保存表單',
+                'notification-switched-to': '已切換到：',
+                'notification-dark-mode-on': '深色模式已開啟',
+                'notification-dark-mode-off': '深色模式已關閉',
+                'notification-auto-expand-on': '自動展開側邊欄已開啟',
+                'notification-auto-expand-off': '自動展開側邊欄已關閉',
+                'notification-animations-on': '動畫效果已開啟',
+                'notification-animations-off': '動畫效果已關閉',
+                'notification-language-changed': '語言已切換為：',
+                'notification-desktop-notifications-on': '桌面通知已開啟',
+                'notification-desktop-notifications-off': '桌面通知已關閉',
+                'notification-sound-alerts-on': '聲音提醒已開啟',
+                'notification-sound-alerts-off': '聲音提醒已關閉',
+                'notification-email-notifications-on': '郵件通知已開啟\n你將收到郵件提醒',
+                'notification-email-notifications-off': '郵件通知已關閉',
+                'notification-browsing-history-on': '瀏覽歷史保存已開啟',
+                'notification-browsing-history-off': '瀏覽歷史保存已關閉',
+                'notification-auto-save-forms-on': '表單自動保存已開啟',
+                'notification-auto-save-forms-off': '表單自動保存已關閉',
+                'notification-theme-changed': '已切換到',
+                'notification-theme': '主題',
+                'calc-0': '0',
+                'calc-clear': '清除',
+                'calc-equals': '=',
+                'timer-start': '開始',
+                'timer-stop': '停止',
+                'timer-reset': '重置',
+                'timer-lap': '計次',
+                'timer-laps-title': '計次記錄',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '轉大寫',
+                'text-lowercase': '轉細寫',
+                'text-capitalize': '首字母大寫',
+                'text-reverse': '反轉文本',
+                'text-count': '統計字符',
+                'text-input-label': '輸入文本',
+                'text-output-label': '處理結果',
+                'text-words': '字數',
+                'text-characters': '字符數',
+                'text-spaces': '空格數'
+            },
+            'zh-CL': {
+                'system-title': '實用小器',
+                'menu-home': '首頁',
+                'menu-settings': '系統設置',
+                'home-welcome': '實用小器集',
+                'home-description': '此處備日常實用之線上小器，以便君速成各種計算轉換之務',
+                'tool-calculator': '算器',
+                'tool-calculator-desc': '備四則運算之科學算器',
+                'tool-timer': '時器',
+                'tool-timer-desc': '精確之秒表時器，可分段計時',
+                'tool-color-converter': '色轉器',
+                'tool-color-converter-desc': 'RGB、HEX、HSL色式互轉',
+                'tool-text-tools': '文器',
+                'tool-text-tools-desc': '文大小寫轉換、統計字符等',
+                'settings-title': '系統設置',
+                'settings-description': '於此配置系統各項參數',
+                'settings-interface': '界面設置',
+                'settings-dark-mode': '暗色模式',
+                'settings-auto-expand': '自動展側欄',
+                'settings-animations': '顯動畫',
+                'settings-language': '語言擇',
+                'settings-theme': '主題色',
+                'theme-light': '明色模式',
+                'theme-dark': '暗色模式',
+                'settings-notifications': '通知設置',
+                'settings-desktop-notifications': '桌面通知',
+                'settings-sound-alerts': '聲音提醒',
+                'settings-email-notifications': '郵件通知',
+                'settings-privacy': '私隱設置',
+                'settings-browsing-history': '存覽史',
+                'settings-auto-save-forms': '自動存表',
+                'notification-switched-to': '已切至：',
+                'notification-dark-mode-on': '暗色模式已啟',
+                'notification-dark-mode-off': '暗色模式已閉',
+                'notification-auto-expand-on': '自動展側欄已啟',
+                'notification-auto-expand-off': '自動展側欄已閉',
+                'notification-animations-on': '動畫已啟',
+                'notification-animations-off': '動畫已閉',
+                'notification-language-changed': '語言已易為：',
+                'notification-desktop-notifications-on': '桌面通知已啟',
+                'notification-desktop-notifications-off': '桌面通知已閉',
+                'notification-sound-alerts-on': '聲音提醒已啟',
+                'notification-sound-alerts-off': '聲音提醒已閉',
+                'notification-email-notifications-on': '郵件通知已啟\n君將收郵件提醒',
+                'notification-email-notifications-off': '郵件通知已閉',
+                'notification-browsing-history-on': '覽史存已啟',
+                'notification-browsing-history-off': '覽史存已閉',
+                'notification-auto-save-forms-on': '表自動存已啟',
+                'notification-auto-save-forms-off': '表自動存已閉',
+                'notification-theme-changed': '已切至',
+                'notification-theme': '主題',
+                'calc-0': '〇',
+                'calc-clear': '清',
+                'calc-equals': '等',
+                'timer-start': '始',
+                'timer-stop': '止',
+                'timer-reset': '重',
+                'timer-lap': '計',
+                'timer-laps-title': '計錄',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '轉大',
+                'text-lowercase': '轉小',
+                'text-capitalize': '首字大',
+                'text-reverse': '反文',
+                'text-count': '計文',
+                'text-input-label': '輸文',
+                'text-output-label': '果',
+                'text-words': '字數',
+                'text-characters': '符數',
+                'text-spaces': '空數'
+            },
+            'ko-KP': {
+                'system-title': '실용소공구',
+                'menu-home': '첫페지',
+                'menu-settings': '체계설정',
+                'home-welcome': '실용소공구모음',
+                'home-description': '여기서는 일상적으로 실용적인 온라인소공구들을 제공하여 여러분이 각종 계산과 변환과업을 빠리 완성할수 있게 도와드립니다',
+                'tool-calculator': '계산기',
+                'tool-calculator-desc': '기본사칙연산을 지원하는 과학계산기',
+                'tool-timer': '계시기',
+                'tool-timer-desc': '정밀한 초시계, 분단계 계시 지원',
+                'tool-color-converter': '색상변환기',
+                'tool-color-converter-desc': 'RGB, HEX, HSL 색상형식 상호변환',
+                'tool-text-tools': '텍스트공구',
+                'tool-text-tools-desc': '텍스트 대소문자 변환, 문자수 통계 등',
+                'settings-title': '체계설정',
+                'settings-description': '여기서 체계의 여러가지 매개변수를 설정합니다',
+                'settings-interface': '인터페스설정',
+                'settings-dark-mode': '어두운모드',
+                'settings-auto-expand': '옆막대자동펼침',
+                'settings-animations': '움직임효과보이기',
+                'settings-language': '언어선택',
+                'settings-theme': '주제색상',
+                'theme-light': '밝은모드',
+                'theme-dark': '어두운모드',
+                'settings-notifications': '통지설정',
+                'settings-desktop-notifications': '데스크톱통지',
+                'settings-sound-alerts': '소리알림',
+                'settings-email-notifications': '전자우편통지',
+                'settings-privacy': '사생활보호설정',
+                'settings-browsing-history': '열람력력보존',
+                'settings-auto-save-forms': '표체자동보존',
+                'notification-switched-to': '전환되였습니다：',
+                'notification-dark-mode-on': '어두운모드가 열렸습니다',
+                'notification-dark-mode-off': '어두운모드가 닫혔습니다',
+                'notification-auto-expand-on': '옆막대자동펼침이 열렸습니다',
+                'notification-auto-expand-off': '옆막대자동펼침이 닫혔습니다',
+                'notification-animations-on': '움직임효과가 열렸습니다',
+                'notification-animations-off': '움직임효과가 닫혔습니다',
+                'notification-language-changed': '언어가 변경되였습니다：',
+                'notification-desktop-notifications-on': '데스크톱통지가 열렸습니다',
+                'notification-desktop-notifications-off': '데스크톱통지가 닫혔습니다',
+                'notification-sound-alerts-on': '소리알림이 열렸습니다',
+                'notification-sound-alerts-off': '소리알림이 닫혔습니다',
+                'notification-email-notifications-on': '전자우편통지가 열렸습니다\n전자우편알림을 받게 됩니다',
+                'notification-email-notifications-off': '전자우편통지가 닫혔습니다',
+                'notification-browsing-history-on': '열람력력보존이 열렸습니다',
+                'notification-browsing-history-off': '열람력력보존이 닫혔습니다',
+                'notification-auto-save-forms-on': '표체자동보존이 열렸습니다',
+                'notification-auto-save-forms-off': '표체자동보존이 닫혔습니다',
+                'notification-theme-changed': '전환되였습니다',
+                'notification-theme': '주제',
+                'calc-0': '0',
+                'calc-clear': '소거',
+                'calc-equals': '=',
+                'timer-start': '시작',
+                'timer-stop': '정지',
+                'timer-reset': '초기화',
+                'timer-lap': '계시',
+                'timer-laps-title': '계시기록',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '대문자로',
+                'text-lowercase': '소문자로',
+                'text-capitalize': '첫글자대문자',
+                'text-reverse': '텍스트반전',
+                'text-count': '문자통계',
+                'text-input-label': '텍스트 입력',
+                'text-output-label': '처리 결과',
+                'text-words': '단어수',
+                'text-characters': '문자수',
+                'text-spaces': '공백수'
+            },
+            'ar-SA': {
+                'system-title': 'أدوات عملية',
+                'menu-home': 'الرئيسية',
+                'menu-settings': 'إعدادات النظام',
+                'home-welcome': 'مجموعة الأدوات العملية',
+                'home-description': 'هنا نقدم بعض الأدوات العملية عبر الإنترنت لمساعدتك على إ completing المهام الحسابية والتحويلية بسرعة',
+                'tool-calculator': 'آلة حاسبة',
+                'tool-calculator-desc': 'آلة حاسبة علمية تدعم العمليات الحسابية الأساسية',
+                'tool-timer': 'مؤقت',
+                'tool-timer-desc': 'ساعة توقيت دقيقة مع دعم التقسيم الزمني',
+                'tool-color-converter': 'محول الألوان',
+                'tool-color-converter-desc': 'تحويل بين صيغ الألوان RGB و HEX و HSL',
+                'tool-text-tools': 'أدوات النص',
+                'tool-text-tools-desc': 'تحويل حالة الأحرف، إحصاء الأحرف، إلخ',
+                'settings-title': 'إعدادات النظام',
+                'settings-description': 'تكوين معلمات النظام المختلفة هنا',
+                'settings-interface': 'إعدادات الواجهة',
+                'settings-dark-mode': 'الوضع الداكن',
+                'settings-auto-expand': 'توسيع الشريط الجانبي تلقائياً',
+                'settings-animations': 'إظهار الرسوم المتحركة',
+                'settings-language': 'اختيار اللغة',
+                'settings-theme': 'لون السمة',
+                'theme-light': 'الوضع الفاتح',
+                'theme-dark': 'الوضع الداكن',
+                'settings-notifications': 'إعدادات الإشعارات',
+                'settings-desktop-notifications': 'إشعارات سطح المكتب',
+                'settings-sound-alerts': 'تنبيهات الصوت',
+                'settings-email-notifications': 'إشعارات البريد الإلكتروني',
+                'settings-privacy': 'إعدادات الخصوصية',
+                'settings-browsing-history': 'حفظ سجل التصفح',
+                'settings-auto-save-forms': 'حفظ النماذج تلقائياً',
+                'notification-switched-to': 'تم التبديل إلى: ',
+                'notification-dark-mode-on': 'تم تفعيل الوضع الداكن',
+                'notification-dark-mode-off': 'تم تعطيل الوضع الداكن',
+                'notification-auto-expand-on': 'تم تفعيل توسيع الشريط الجانبي تلقائياً',
+                'notification-auto-expand-off': 'تم تعطيل توسيع الشريط الجانبي تلقائياً',
+                'notification-animations-on': 'تم تفعيل الرسوم المتحركة',
+                'notification-animations-off': 'تم تعطيل الرسوم المتحركة',
+                'notification-language-changed': 'تم تغيير اللغة إلى: ',
+                'notification-desktop-notifications-on': 'تم تفعيل إشعارات سطح المكتب',
+                'notification-desktop-notifications-off': 'تم تعطيل إشعارات سطح المكتب',
+                'notification-sound-alerts-on': 'تم تفعيل تنبيهات الصوت',
+                'notification-sound-alerts-off': 'تم تعطيل تنبيهات الصوت',
+                'notification-email-notifications-on': 'تم تفعيل إشعارات البريد الإلكتروني\nستتلقى تذكيرات بالبريد الإلكتروني',
+                'notification-email-notifications-off': 'تم تعطيل إشعارات البريد الإلكتروني',
+                'notification-browsing-history-on': 'تم تفعيل حفظ سجل التصفح',
+                'notification-browsing-history-off': 'تم تعطيل حفظ سجل التصفح',
+                'notification-auto-save-forms-on': 'تم تفعيل حفظ النماذج تلقائياً',
+                'notification-auto-save-forms-off': 'تم تعطيل حفظ النماذج تلقائياً',
+                'notification-theme-changed': 'تم التبديل إلى',
+                'notification-theme': 'السمة',
+                'calc-0': '0',
+                'calc-clear': 'مسح',
+                'calc-equals': '=',
+                'timer-start': 'بدء',
+                'timer-stop': 'إيقاف',
+                'timer-reset': 'إعادة تعيين',
+                'timer-lap': 'دورة',
+                'timer-laps-title': 'سجلات الدورات',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'تحويل إلى كبيرة',
+                'text-lowercase': 'تحويل إلى صغيرة',
+                'text-capitalize': 'تكبير الحرف الأول',
+                'text-reverse': 'عكس النص',
+                'text-count': 'إحصاء النص',
+                'text-input-label': 'أدخل النص',
+                'text-output-label': 'النتيجة',
+                'text-words': 'عدد الكلمات',
+                'text-characters': 'عدد الأحرف',
+                'text-spaces': 'عدد المسافات'
+            },
+            'en-US': {
+                'system-title': 'Utility Tools',
+                'menu-home': 'Home',
+                'menu-settings': 'System Settings',
+                'home-welcome': 'Collection of Utility Tools',
+                'home-description': 'Here we provide some practical online tools to help you quickly complete various calculation and conversion tasks',
+                'tool-calculator': 'Calculator',
+                'tool-calculator-desc': 'Scientific calculator supporting basic arithmetic operations',
+                'tool-timer': 'Timer',
+                'tool-timer-desc': 'Precise stopwatch timer with split timing support',
+                'tool-color-converter': 'Color Converter',
+                'tool-color-converter-desc': 'Convert between RGB, HEX, HSL color formats',
+                'tool-text-tools': 'Text Tools',
+                'tool-text-tools-desc': 'Text case conversion, character counting, etc.',
+                'settings-title': 'System Settings',
+                'settings-description': 'Configure various system parameters here',
+                'settings-interface': 'Interface Settings',
+                'settings-dark-mode': 'Dark Mode',
+                'settings-auto-expand': 'Auto Expand Sidebar',
+                'settings-animations': 'Show Animations',
+                'settings-language': 'Language Selection',
+                'settings-theme': 'Theme Color',
+                'theme-light': 'Light Mode',
+                'theme-dark': 'Dark Mode',
+                'settings-notifications': 'Notification Settings',
+                'settings-desktop-notifications': 'Desktop Notifications',
+                'settings-sound-alerts': 'Sound Alerts',
+                'settings-email-notifications': 'Email Notifications',
+                'settings-privacy': 'Privacy Settings',
+                'settings-browsing-history': 'Save Browsing History',
+                'settings-auto-save-forms': 'Auto Save Forms',
+                'notification-switched-to': 'Switched to: ',
+                'notification-dark-mode-on': 'Dark mode enabled',
+                'notification-dark-mode-off': 'Dark mode disabled',
+                'notification-auto-expand-on': 'Auto expand sidebar enabled',
+                'notification-auto-expand-off': 'Auto expand sidebar disabled',
+                'notification-animations-on': 'Animations enabled',
+                'notification-animations-off': 'Animations disabled',
+                'notification-language-changed': 'Language changed to: ',
+                'notification-desktop-notifications-on': 'Desktop notifications enabled',
+                'notification-desktop-notifications-off': 'Desktop notifications disabled',
+                'notification-sound-alerts-on': 'Sound alerts enabled',
+                'notification-sound-alerts-off': 'Sound alerts disabled',
+                'notification-email-notifications-on': 'Email notifications enabled\nYou will receive email reminders',
+                'notification-email-notifications-off': 'Email notifications disabled',
+                'notification-browsing-history-on': 'Browsing history saving enabled',
+                'notification-browsing-history-off': 'Browsing history saving disabled',
+                'notification-auto-save-forms-on': 'Auto save forms enabled',
+                'notification-auto-save-forms-off': 'Auto save forms disabled',
+                'notification-theme-changed': 'Switched to',
+                'notification-theme': 'theme',
+                'calc-0': '0',
+                'calc-clear': 'Clear',
+                'calc-equals': '=',
+                'timer-start': 'Start',
+                'timer-stop': 'Stop',
+                'timer-reset': 'Reset',
+                'timer-lap': 'Lap',
+                'timer-laps-title': 'Lap Records',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'Uppercase',
+                'text-lowercase': 'Lowercase',
+                'text-capitalize': 'Capitalize',
+                'text-reverse': 'Reverse Text',
+                'text-count': 'Count Text',
+                'text-input-label': 'Input Text',
+                'text-output-label': 'Result',
+                'text-words': 'Words',
+                'text-characters': 'Characters',
+                'text-spaces': 'Spaces'
+            },
+            'ja-JP': {
+                'system-title': '実用ツール',
+                'menu-home': 'ホーム',
+                'menu-settings': 'システム設定',
+                'home-welcome': '実用ツールコレクション',
+                'home-description': 'ここでは、各種計算や変換タスクを迅速に完了させるための実用的なオンラインツールを提供しています',
+                'tool-calculator': '電卓',
+                'tool-calculator-desc': '基本的な四則演算をサポートする科学電卓',
+                'tool-timer': 'タイマー',
+                'tool-timer-desc': 'スプリットタイミングをサポートする精密なストップウォッチタイマー',
+                'tool-color-converter': 'カラーコンバーター',
+                'tool-color-converter-desc': 'RGB、HEX、HSLカラーフォーマット間の変換',
+                'tool-text-tools': 'テキストツール',
+                'tool-text-tools-desc': 'テキストの大文字小文字変換、文字数カウントなど',
+                'settings-title': 'システム設定',
+                'settings-description': 'ここでシステムのさまざまなパラメータを構成します',
+                'settings-interface': 'インターフェース設定',
+                'settings-dark-mode': 'ダークモード',
+                'settings-auto-expand': 'サイドバーを自動展開',
+                'settings-animations': 'アニメーションを表示',
+                'settings-language': '言語選択',
+                'settings-theme': 'テーマカラー',
+                'theme-light': 'ライトモード',
+                'theme-dark': 'ダークモード',
+                'settings-notifications': '通知設定',
+                'settings-desktop-notifications': 'デスクトップ通知',
+                'settings-sound-alerts': 'サウンドアラート',
+                'settings-email-notifications': 'メール通知',
+                'settings-privacy': 'プライバシー設定',
+                'settings-browsing-history': '閲覧履歴を保存',
+                'settings-auto-save-forms': 'フォームを自動保存',
+                'notification-switched-to': '切り替えました：',
+                'notification-dark-mode-on': 'ダークモードが有効になりました',
+                'notification-dark-mode-off': 'ダークモードが無効になりました',
+                'notification-auto-expand-on': 'サイドバーの自動展開が有効になりました',
+                'notification-auto-expand-off': 'サイドバーの自動展開が無効になりました',
+                'notification-animations-on': 'アニメーションが有効になりました',
+                'notification-animations-off': 'アニメーションが無効になりました',
+                'notification-language-changed': '言語が変更されました：',
+                'notification-desktop-notifications-on': 'デスクトップ通知が有効になりました',
+                'notification-desktop-notifications-off': 'デスクトップ通知が無効になりました',
+                'notification-sound-alerts-on': 'サウンドアラートが有効になりました',
+                'notification-sound-alerts-off': 'サウンドアラートが無効になりました',
+                'notification-email-notifications-on': 'メール通知が有効になりました\nメールリマインダーを受け取ります',
+                'notification-email-notifications-off': 'メール通知が無効になりました',
+                'notification-browsing-history-on': '閲覧履歴の保存が有効になりました',
+                'notification-browsing-history-off': '閲覧履歴の保存が無効になりました',
+                'notification-auto-save-forms-on': 'フォームの自動保存が有効になりました',
+                'notification-auto-save-forms-off': 'フォームの自動保存が無効になりました',
+                'notification-theme-changed': '切り替えました',
+                'notification-theme': 'テーマ',
+                'calc-0': '0',
+                'calc-clear': 'クリア',
+                'calc-equals': '=',
+                'timer-start': '開始',
+                'timer-stop': '停止',
+                'timer-reset': 'リセット',
+                'timer-lap': 'ラップ',
+                'timer-laps-title': 'ラップ記録',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '大文字に',
+                'text-lowercase': '小文字に',
+                'text-capitalize': '頭文字大文字',
+                'text-reverse': 'テキスト反転',
+                'text-count': '文字数カウント',
+                'text-input-label': 'テキスト入力',
+                'text-output-label': '結果',
+                'text-words': '単語数',
+                'text-characters': '文字数',
+                'text-spaces': 'スペース数'
+            },
+            'es-ES': {
+                'system-title': 'Herramientas Prácticas',
+                'menu-home': 'Inicio',
+                'menu-settings': 'Configuración del Sistema',
+                'home-welcome': 'Colección de Herramientas Prácticas',
+                'home-description': 'Aquí proporcionamos algunas herramientas prácticas en línea para ayudarte a completar rápidamente varias tareas de cálculo y conversión',
+                'tool-calculator': 'Calculadora',
+                'tool-calculator-desc': 'Calculadora científica que soporta operaciones aritméticas básicas',
+                'tool-timer': 'Temporizador',
+                'tool-timer-desc': 'Temporizador de cronómetro preciso con soporte de tiempo dividido',
+                'tool-color-converter': 'Convertidor de Color',
+                'tool-color-converter-desc': 'Convertir entre formatos de color RGB, HEX, HSL',
+                'tool-text-tools': 'Herramientas de Texto',
+                'tool-text-tools-desc': 'Conversión de mayúsculas/minúsculas, conteo de caracteres, etc.',
+                'settings-title': 'Configuración del Sistema',
+                'settings-description': 'Configure varios parámetros del sistema aquí',
+                'settings-interface': 'Configuración de Interfaz',
+                'settings-dark-mode': 'Modo Oscuro',
+                'settings-auto-expand': 'Expansión Automática de la Barra Lateral',
+                'settings-animations': 'Mostrar Animaciones',
+                'settings-language': 'Selección de Idioma',
+                'settings-theme': 'Color del Tema',
+                'theme-light': 'Modo Claro',
+                'theme-dark': 'Modo Oscuro',
+                'settings-notifications': 'Configuración de Notificaciones',
+                'settings-desktop-notifications': 'Notificaciones de Escritorio',
+                'settings-sound-alerts': 'Alertas de Sonido',
+                'settings-email-notifications': 'Notificaciones por Correo',
+                'settings-privacy': 'Configuración de Privacidad',
+                'settings-browsing-history': 'Guardar Historial de Navegación',
+                'settings-auto-save-forms': 'Guardar Formularios Automáticamente',
+                'notification-switched-to': 'Cambiado a: ',
+                'notification-dark-mode-on': 'Modo oscuro activado',
+                'notification-dark-mode-off': 'Modo oscuro desactivado',
+                'notification-auto-expand-on': 'Expansión automática de la barra lateral activada',
+                'notification-auto-expand-off': 'Expansión automática de la barra lateral desactivada',
+                'notification-animations-on': 'Animaciones activadas',
+                'notification-animations-off': 'Animaciones desactivadas',
+                'notification-language-changed': 'Idioma cambiado a: ',
+                'notification-desktop-notifications-on': 'Notificaciones de escritorio activadas',
+                'notification-desktop-notifications-off': 'Notificaciones de escritorio desactivadas',
+                'notification-sound-alerts-on': 'Alertas de sonido activadas',
+                'notification-sound-alerts-off': 'Alertas de sonido desactivadas',
+                'notification-email-notifications-on': 'Notificaciones por correo activadas\nRecibirá recordatorios por correo',
+                'notification-email-notifications-off': 'Notificaciones por correo desactivadas',
+                'notification-browsing-history-on': 'Guardado del historial de navegación activado',
+                'notification-browsing-history-off': 'Guardado del historial de navegación desactivado',
+                'notification-auto-save-forms-on': 'Guardado automático de formularios activado',
+                'notification-auto-save-forms-off': 'Guardado automático de formularios desactivado',
+                'notification-theme-changed': 'Cambiado a',
+                'notification-theme': 'tema',
+                'calc-0': '0',
+                'calc-clear': 'Limpiar',
+                'calc-equals': '=',
+                'timer-start': 'Iniciar',
+                'timer-stop': 'Detener',
+                'timer-reset': 'Reiniciar',
+                'timer-lap': 'Vuelta',
+                'timer-laps-title': 'Registros de Vueltas',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'Mayúsculas',
+                'text-lowercase': 'Minúsculas',
+                'text-capitalize': 'Capitalizar',
+                'text-reverse': 'Invertir Texto',
+                'text-count': 'Contar Texto',
+                'text-input-label': 'Texto de entrada',
+                'text-output-label': 'Resultado',
+                'text-words': 'Palabras',
+                'text-characters': 'Caracteres',
+                'text-spaces': 'Espacios'
+            },
+            'fr-FR': {
+                'system-title': 'Outils Pratiques',
+                'menu-home': 'Accueil',
+                'menu-settings': 'Paramètres Système',
+                'home-welcome': 'Collection d\'Outils Pratiques',
+                'home-description': 'Nous proposons ici quelques outils pratiques en ligne pour vous aider à compléter rapidement diverses tâches de calcul et de conversion',
+                'tool-calculator': 'Calculatrice',
+                'tool-calculator-desc': 'Calculatrice scientifique supportant les opérations arithmétiques de base',
+                'tool-timer': 'Minuteur',
+                'tool-timer-desc': 'Minuteur de chronomètre précis avec support de temps intermédiaire',
+                'tool-color-converter': 'Convertisseur de Couleur',
+                'tool-color-converter-desc': 'Convertir entre les formats de couleur RGB, HEX, HSL',
+                'tool-text-tools': 'Outils de Texte',
+                'tool-text-tools-desc': 'Conversion de casse, comptage de caractères, etc.',
+                'settings-title': 'Paramètres Système',
+                'settings-description': 'Configurez divers paramètres système ici',
+                'settings-interface': 'Paramètres d\'Interface',
+                'settings-dark-mode': 'Mode Sombre',
+                'settings-auto-expand': 'Développement Automatique de la Barre Latérale',
+                'settings-animations': 'Afficher les Animations',
+                'settings-language': 'Sélection de Langue',
+                'settings-theme': 'Couleur du Thème',
+                'theme-light': 'Mode Clair',
+                'theme-dark': 'Mode Sombre',
+                'settings-notifications': 'Paramètres de Notification',
+                'settings-desktop-notifications': 'Notifications de Bureau',
+                'settings-sound-alerts': 'Alertes Sonores',
+                'settings-email-notifications': 'Notifications par E-mail',
+                'settings-privacy': 'Paramètres de Confidentialité',
+                'settings-browsing-history': 'Enregistrer l\'Historique de Navigation',
+                'settings-auto-save-forms': 'Enregistrement Automatique des Formulaires',
+                'notification-switched-to': 'Passé à : ',
+                'notification-dark-mode-on': 'Mode sombre activé',
+                'notification-dark-mode-off': 'Mode sombre désactivé',
+                'notification-auto-expand-on': 'Développement automatique de la barre latérale activé',
+                'notification-auto-expand-off': 'Développement automatique de la barre latérale désactivé',
+                'notification-animations-on': 'Animations activées',
+                'notification-animations-off': 'Animations désactivées',
+                'notification-language-changed': 'Langue changée en : ',
+                'notification-desktop-notifications-on': 'Notifications de bureau activées',
+                'notification-desktop-notifications-off': 'Notifications de bureau désactivées',
+                'notification-sound-alerts-on': 'Alertes sonores activées',
+                'notification-sound-alerts-off': 'Alertes sonores désactivées',
+                'notification-email-notifications-on': 'Notifications par e-mail activées\nVous recevrez des rappels par e-mail',
+                'notification-email-notifications-off': 'Notifications par e-mail désactivées',
+                'notification-browsing-history-on': 'Enregistrement de l\'historique de navigation activé',
+                'notification-browsing-history-off': 'Enregistrement de l\'historique de navigation désactivé',
+                'notification-auto-save-forms-on': 'Enregistrement automatique des formulaires activé',
+                'notification-auto-save-forms-off': 'Enregistrement automatique des formulaires désactivé',
+                'notification-theme-changed': 'Passé à',
+                'notification-theme': 'thème',
+                'calc-0': '0',
+                'calc-clear': 'Effacer',
+                'calc-equals': '=',
+                'timer-start': 'Démarrer',
+                'timer-stop': 'Arrêter',
+                'timer-reset': 'Réinitialiser',
+                'timer-lap': 'Tour',
+                'timer-laps-title': 'Enregistres de Tours',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'Majuscules',
+                'text-lowercase': 'Minuscules',
+                'text-capitalize': 'Capitaliser',
+                'text-reverse': 'Inverser le Texte',
+                'text-count': 'Compter le Texte',
+                'text-input-label': 'Texte d\'entrée',
+                'text-output-label': 'Résultat',
+                'text-words': 'Mots',
+                'text-characters': 'Caractères',
+                'text-spaces': 'Espaces'
+            },
+            'de-DE': {
+                'system-title': 'Nützliche Werkzeuge',
+                'menu-home': 'Startseite',
+                'menu-settings': 'Systemeinstellungen',
+                'home-welcome': 'Sammlung nützlicher Werkzeuge',
+                'home-description': 'Hier bieten wir einige praktische Online-Tools an, um Ihnen bei der schnellen Erledigung verschiedener Berechnungs- und Umwandlungsaufgaben zu helfen',
+                'tool-calculator': 'Rechner',
+                'tool-calculator-desc': 'Wissenschaftlicher Rechner mit Unterstützung für grundlegende arithmetische Operationen',
+                'tool-timer': 'Timer',
+                'tool-timer-desc': 'Präzise Stoppuhr mit Unterstützung für Zwischenzeiten',
+                'tool-color-converter': 'Farbumwandler',
+                'tool-color-converter-desc': 'Konvertierung zwischen RGB-, HEX-, HSL-Farbformaten',
+                'tool-text-tools': 'Text-Tools',
+                'tool-text-tools-desc': 'Groß-/Kleinschreibung, Zeichenanzahl, etc.',
+                'settings-title': 'Systemeinstellungen',
+                'settings-description': 'Konfigurieren Sie hier verschiedene Systemparameter',
+                'settings-interface': 'Schnittstelleneinstellungen',
+                'settings-dark-mode': 'Dunkler Modus',
+                'settings-auto-expand': 'Seitenleiste automatisch erweitern',
+                'settings-animations': 'Animationen anzeigen',
+                'settings-language': 'Sprachauswahl',
+                'settings-theme': 'Themenfarbe',
+                'theme-light': 'Heller Modus',
+                'theme-dark': 'Dunkler Modus',
+                'settings-notifications': 'Benachrichtigungseinstellungen',
+                'settings-desktop-notifications': 'Desktop-Benachrichtigungen',
+                'settings-sound-alerts': 'Sound-Warnungen',
+                'settings-email-notifications': 'E-Mail-Benachrichtigungen',
+                'settings-privacy': 'Privatsphäre-Einstellungen',
+                'settings-browsing-history': 'Browserverlauf speichern',
+                'settings-auto-save-forms': 'Formulare automatisch speichern',
+                'notification-switched-to': 'Gewechselt zu: ',
+                'notification-dark-mode-on': 'Dunkler Modus aktiviert',
+                'notification-dark-mode-off': 'Dunkler Modus deaktiviert',
+                'notification-auto-expand-on': 'Automatische Erweiterung der Seitenleiste aktiviert',
+                'notification-auto-expand-off': 'Automatische Erweiterung der Seitenleiste deaktiviert',
+                'notification-animations-on': 'Animationen aktiviert',
+                'notification-animations-off': 'Animationen deaktiviert',
+                'notification-language-changed': 'Sprache geändert zu: ',
+                'notification-desktop-notifications-on': 'Desktop-Benachrichtigungen aktiviert',
+                'notification-desktop-notifications-off': 'Desktop-Benachrichtigungen deaktiviert',
+                'notification-sound-alerts-on': 'Sound-Warnungen aktiviert',
+                'notification-sound-alerts-off': 'Sound-Warnungen deaktiviert',
+                'notification-email-notifications-on': 'E-Mail-Benachrichtigungen aktiviert\nSie erhalten E-Mail-Erinnerungen',
+                'notification-email-notifications-off': 'E-Mail-Benachrichtigungen deaktiviert',
+                'notification-browsing-history-on': 'Speichern des Browserverlaufs aktiviert',
+                'notification-browsing-history-off': 'Speichern des Browserverlaufs deaktiviert',
+                'notification-auto-save-forms-on': 'Automatisches Speichern von Formularen aktiviert',
+                'notification-auto-save-forms-off': 'Automatisches Speichern von Formularen deaktiviert',
+                'notification-theme-changed': 'Gewechselt zu',
+                'notification-theme': 'Thema',
+                'calc-0': '0',
+                'calc-clear': 'Löschen',
+                'calc-equals': '=',
+                'timer-start': 'Start',
+                'timer-stop': 'Stop',
+                'timer-reset': 'Zurücksetzen',
+                'timer-lap': 'Runde',
+                'timer-laps-title': 'Rundenprotokolle',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'Großbuchstaben',
+                'text-lowercase': 'Kleinbuchstaben',
+                'text-capitalize': 'Großschreiben',
+                'text-reverse': 'Text umkehren',
+                'text-count': 'Text zählen',
+                'text-input-label': 'Text eingeben',
+                'text-output-label': 'Ergebnis',
+                'text-words': 'Wörter',
+                'text-characters': 'Zeichen',
+                'text-spaces': 'Leerzeichen'
+            },
+            'ko-KR': {
+                'system-title': '실용 도구',
+                'menu-home': '홈',
+                'menu-settings': '시스템 설정',
+                'home-welcome': '실용 도구 모음',
+                'home-description': '여기서 다양한 계산 및 변환 작업을 빠르게 완료할 수 있는 실용적인 온라인 도구를 제공합니다',
+                'tool-calculator': '계산기',
+                'tool-calculator-desc': '기본 사칙 연산을 지원하는 과학 계산기',
+                'tool-timer': '타이머',
+                'tool-timer-desc': '분할 타이밍을 지원하는 정밀한 스톱워치 타이머',
+                'tool-color-converter': '색상 변환기',
+                'tool-color-converter-desc': 'RGB, HEX, HSL 색상 형식 간 변환',
+                'tool-text-tools': '텍스트 도구',
+                'tool-text-tools-desc': '텍스트 대소문자 변환, 문자 수 계산 등',
+                'settings-title': '시스템 설정',
+                'settings-description': '여기서 시스템의 다양한 매개변수를 구성합니다',
+                'settings-interface': '인터페이스 설정',
+                'settings-dark-mode': '다크 모드',
+                'settings-auto-expand': '사이드바 자동 확장',
+                'settings-animations': '애니메이션 표시',
+                'settings-language': '언어 선택',
+                'settings-theme': '테마 색상',
+                'theme-light': '라이트 모드',
+                'theme-dark': '다크 모드',
+                'settings-notifications': '알림 설정',
+                'settings-desktop-notifications': '데스크톱 알림',
+                'settings-sound-alerts': '소리 알림',
+                'settings-email-notifications': '이메일 알림',
+                'settings-privacy': '개인정보 설정',
+                'settings-browsing-history': '브라우징 기록 저장',
+                'settings-auto-save-forms': '양식 자동 저장',
+                'notification-switched-to': '전환됨: ',
+                'notification-dark-mode-on': '다크 모드가 활성화되었습니다',
+                'notification-dark-mode-off': '다크 모드가 비활성화되었습니다',
+                'notification-auto-expand-on': '사이드바 자동 확장이 활성화되었습니다',
+                'notification-auto-expand-off': '사이드바 자동 확장이 비활성화되었습니다',
+                'notification-animations-on': '애니메이션이 활성화되었습니다',
+                'notification-animations-off': '애니메이션이 비활성화되었습니다',
+                'notification-language-changed': '언어가 변경되었습니다: ',
+                'notification-desktop-notifications-on': '데스크톱 알림이 활성화되었습니다',
+                'notification-desktop-notifications-off': '데스크톱 알림이 비활성화되었습니다',
+                'notification-sound-alerts-on': '소리 알림이 활성화되었습니다',
+                'notification-sound-alerts-off': '소리 알림이 비활성화되었습니다',
+                'notification-email-notifications-on': '이메일 알림이 활성화되었습니다\n이메일 알림을 받게 됩니다',
+                'notification-email-notifications-off': '이메일 알림이 비활성화되었습니다',
+                'notification-browsing-history-on': '브라우징 기록 저장이 활성화되었습니다',
+                'notification-browsing-history-off': '브라우징 기록 저장이 비활성화되었습니다',
+                'notification-auto-save-forms-on': '양식 자동 저장이 활성화되었습니다',
+                'notification-auto-save-forms-off': '양식 자동 저장이 비활성화되었습니다',
+                'notification-theme-changed': '전환됨',
+                'notification-theme': '테마',
+                'calc-0': '0',
+                'calc-clear': '지우기',
+                'calc-equals': '=',
+                'timer-start': '시작',
+                'timer-stop': '중지',
+                'timer-reset': '재설정',
+                'timer-lap': '랩',
+                'timer-laps-title': '랩 기록',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': '대문자로',
+                'text-lowercase': '소문자로',
+                'text-capitalize': '첫 글자 대문자',
+                'text-reverse': '텍스트 반전',
+                'text-count': '텍스트 계산',
+                'text-input-label': '텍스트 입력',
+                'text-output-label': '결과',
+                'text-words': '단어 수',
+                'text-characters': '문자 수',
+                'text-spaces': '공백 수'
+            },
+            'ru-RU': {
+                'system-title': 'Полезные Инструменты',
+                'menu-home': 'Главная',
+                'menu-settings': 'Настройки Системы',
+                'home-welcome': 'Коллекция Полезных Инструментов',
+                'home-description': 'Здесь мы предоставляем некоторые практичные онлайн-инструменты, чтобы помочь вам быстро выполнить различные расчетные и преобразовательные задачи',
+                'tool-calculator': 'Калькулятор',
+                'tool-calculator-desc': 'Научный калькулятор с поддержкой основных арифметических операций',
+                'tool-timer': 'Таймер',
+                'tool-timer-desc': 'Точный секундомер с поддержкой раздельного хронометража',
+                'tool-color-converter': 'Конвертер Цветов',
+                'tool-color-converter-desc': 'Преобразование между форматами цветов RGB, HEX, HSL',
+                'tool-text-tools': 'Текстовые Инструменты',
+                'tool-text-tools-desc': 'Преобразование регистра, подсчет символов и т.д.',
+                'settings-title': 'Настройки Системы',
+                'settings-description': 'Настройте различные параметры системы здесь',
+                'settings-interface': 'Настройки Интерфейса',
+                'settings-dark-mode': 'Темный Режим',
+                'settings-auto-expand': 'Автоматическое Развертывание Боковой Панели',
+                'settings-animations': 'Показывать Анимации',
+                'settings-language': 'Выбор Языка',
+                'settings-theme': 'Цвет Темы',
+                'theme-light': 'Светлый Режим',
+                'theme-dark': 'Темный Режим',
+                'settings-notifications': 'Настройки Уведомлений',
+                'settings-desktop-notifications': 'Уведомления на Рабочем Столе',
+                'settings-sound-alerts': 'Звуковые Оповещения',
+                'settings-email-notifications': 'Email Уведомления',
+                'settings-privacy': 'Настройки Конфиденциальности',
+                'settings-browsing-history': 'Сохранять Историю Браузера',
+                'settings-auto-save-forms': 'Автоматическое Сохранение Форм',
+                'notification-switched-to': 'Переключено на: ',
+                'notification-dark-mode-on': 'Темный режим включен',
+                'notification-dark-mode-off': 'Темный режим выключен',
+                'notification-auto-expand-on': 'Автоматическое развертывание боковой панели включено',
+                'notification-auto-expand-off': 'Автоматическое развертывание боковой панели выключено',
+                'notification-animations-on': 'Анимации включены',
+                'notification-animations-off': 'Анимации выключены',
+                'notification-language-changed': 'Язык изменен на: ',
+                'notification-desktop-notifications-on': 'Уведомления на рабочем столе включены',
+                'notification-desktop-notifications-off': 'Уведомления на рабочем столе выключены',
+                'notification-sound-alerts-on': 'Звуковые оповещения включены',
+                'notification-sound-alerts-off': 'Звуковые оповещения выключены',
+                'notification-email-notifications-on': 'Email уведомления включены\nВы будете получать напоминания по электронной почте',
+                'notification-email-notifications-off': 'Email уведомления выключены',
+                'notification-browsing-history-on': 'Сохранение истории браузера включено',
+                'notification-browsing-history-off': 'Сохранение истории браузера выключено',
+                'notification-auto-save-forms-on': 'Автоматическое сохранение форм включено',
+                'notification-auto-save-forms-off': 'Автоматическое сохранение форм выключено',
+                'notification-theme-changed': 'Переключено на',
+                'notification-theme': 'тема',
+                'calc-0': '0',
+                'calc-clear': 'Очистить',
+                'calc-equals': '=',
+                'timer-start': 'Старт',
+                'timer-stop': 'Стоп',
+                'timer-reset': 'Сброс',
+                'timer-lap': 'Круг',
+                'timer-laps-title': 'Записи Кругов',
+                'color-hex': 'HEX',
+                'color-rgb': 'RGB',
+                'color-hsl': 'HSL',
+                'text-uppercase': 'Верхний регистр',
+                'text-lowercase': 'Нижний регистр',
+                'text-capitalize': 'С Заглавной Буквы',
+                'text-reverse': 'Перевернуть Текст',
+                'text-count': 'Подсчет Текста',
+                'text-input-label': 'Введите текст',
+                'text-output-label': 'Результат',
+                'text-words': 'Слова',
+                'text-characters': 'Символы',
+                'text-spaces': 'Пробелы'
+            }
+        };
+        // 主题颜色配置 - 重新排序，前4个适合浅色，后4个适合深色
+        const themes = [{
+                start: '#667eea',
+                end: '#764ba2',
+                accent: '#667eea',
+                name: '优雅紫'
+            }, // 浅色
+            {
+                start: '#4facfe',
+                end: '#00f2fe',
+                accent: '#4facfe',
+                name: '清新蓝'
+            }, // 浅色
+            {
+                start: '#43e97b',
+                end: '#38f9d7',
+                accent: '#43e97b',
+                name: '自然绿'
+            }, // 浅色
+            {
+                start: '#fa709a',
+                end: '#fee140',
+                accent: '#fa709a',
+                name: '活力橙'
+            }, // 浅色
+            {
+                start: '#f093fb',
+                end: '#f5576c',
+                accent: '#f093fb',
+                name: '魅惑粉'
+            }, // 深色
+            {
+                start: '#30cfd0',
+                end: '#330867',
+                accent: '#30cfd0',
+                name: '深邃蓝'
+            }, // 深色
+            {
+                start: '#a8edea',
+                end: '#fed6e3',
+                accent: '#a8edea',
+                name: '柔和青'
+            }, // 深色
+            {
+                start: '#ff9a9e',
+                end: '#fecfef',
+                accent: '#ff9a9e',
+                name: '浪漫粉'
+            } // 深色
+        ];
+
+        // 获取DOM元素
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const contentPages = document.querySelectorAll('.content-page');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const root = document.documentElement;
+        const darkModeCheckbox = document.getElementById('dark-mode');
+        const languageSelect = document.getElementById('language-select');
+
+        // 当前语言
+        let currentLanguage = 'zh-CN';
+
+        // 检查是否为RTL语言
+        function isRTL(lang) {
+            return lang === 'ar-SA';
+        }
+
+        // 切换语言函数
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const translation = translations[lang];
+
+            // 更新所有带有data-i18n属性的元素
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translation[key]) {
+                    // 对于按钮，使用textContent而不是innerHTML
+                    if (element.tagName === 'BUTTON') {
+                        element.textContent = translation[key];
+                    } else {
+                        element.innerHTML = translation[key];
+                    }
+                }
+            });
+
+            // 更新HTML的lang属性和dir属性
+            document.documentElement.lang = lang;
+            if (isRTL(lang)) {
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.documentElement.dir = 'ltr';
+            }
+
+            // 保存语言设置
+            localStorage.setItem('selectedLanguage', lang);
+
+            // 更新语言选择框的值
+            languageSelect.value = lang;
+        }
+
+        // 计算器变量
+        let calcDisplay = '0';
+        let calcPreviousOperand = '';
+        let calcOperation = null;
+        let calcShouldResetDisplay = false;
+
+        // 更新计算器显示
+        function updateDisplay() {
+            const display = document.querySelector('#calc-display');
+            if (display) {
+                display.textContent = calcDisplay;
+            }
+        }
+
+        // 追加到计算器显示
+        function appendToDisplay(value) {
+            if (calcShouldResetDisplay) {
+                calcDisplay = '';
+                calcShouldResetDisplay = false;
+            }
+
+            if (calcDisplay === '0' && value !== '.') {
+                calcDisplay = value;
+            } else {
+                calcDisplay += value;
+            }
+            updateDisplay();
+        }
+
+        // 清除计算器
+        function clearCalculator() {
+            calcDisplay = '0';
+            calcPreviousOperand = '';
+            calcOperation = null;
+            calcShouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        // 删除最后一个字符
+        function deleteLast() {
+            if (calcDisplay.length === 1) {
+                calcDisplay = '0';
+            } else {
+                calcDisplay = calcDisplay.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        // 计算结果
+        function calculateResult() {
+            if (calcOperation === null || calcPreviousOperand === '') {
+                return;
+            }
+
+            const currentOperand = parseFloat(calcDisplay);
+            let result;
+
+            switch (calcOperation) {
+                case '+':
+                    result = calcPreviousOperand + currentOperand;
+                    break;
+                case '-':
+                    result = calcPreviousOperand - currentOperand;
+                    break;
+                case '*':
+                    result = calcPreviousOperand * currentOperand;
+                    break;
+                case '/':
+                    result = calcPreviousOperand / currentOperand;
+                    break;
+            }
+
+            calcDisplay = result.toString();
+            calcPreviousOperand = '';
+            calcOperation = null;
+            calcShouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        // 设置操作
+        function setOperation(operation) {
+            if (calcOperation !== null) {
+                calculateResult();
+            }
+            calcPreviousOperand = parseFloat(calcDisplay);
+            calcOperation = operation;
+            calcShouldResetDisplay = true;
+        }
+
+        // 计时器变量
+        let timerInterval = null;
+        let timerStartTime = 0;
+        let timerElapsedTime = 0;
+        let timerLaps = [];
+
+        // 开始计时器
+        function startTimer() {
+            if (!timerInterval) {
+                timerStartTime = Date.now() - timerElapsedTime;
+                timerInterval = setInterval(updateTimer, 10);
+
+                document.getElementById('timer-start').style.display = 'none';
+                document.getElementById('timer-stop').style.display = 'inline-block';
+            }
+        }
+
+        // 停止计时器
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+
+                document.getElementById('timer-start').style.display = 'inline-block';
+                document.getElementById('timer-stop').style.display = 'none';
+            }
+        }
+
+        // 重置计时器
+        function resetTimer() {
+            stopTimer();
+            timerElapsedTime = 0;
+            timerLaps = [];
+            updateTimerDisplay();
+            document.getElementById('timer-laps').innerHTML = '';
+        }
+
+        // 记录分段
+        function recordLap() {
+            if (timerInterval) {
+                const lapTime = timerElapsedTime;
+                timerLaps.push(lapTime);
+
+                const lapsContainer = document.getElementById('timer-laps');
+                const lapElement = document.createElement('div');
+                lapElement.className = 'timer-lap';
+                const translation = translations[currentLanguage];
+                const lapTitle = translation['timer-laps-title'] || '计次记录';
+                lapElement.innerHTML = `
+                    <span>${lapTitle} ${timerLaps.length}</span>
+                    <span>${formatTime(lapTime)}</span>
+                `;
+                lapsContainer.appendChild(lapElement);
+                lapsContainer.scrollTop = lapsContainer.scrollHeight;
+            }
+        }
+
+        // 更新计时器
+        function updateTimer() {
+            timerElapsedTime = Date.now() - timerStartTime;
+            updateTimerDisplay();
+        }
+
+        // 更新计时器显示
+        function updateTimerDisplay() {
+            const display = document.getElementById('timer-display');
+            if (display) {
+                display.textContent = formatTime(timerElapsedTime);
+            }
+        }
+
+        // 格式化时间
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const ms = Math.floor((milliseconds % 1000) / 10);
+
+            return `${padZero(minutes)}:${padZero(seconds)}:${padZero(ms)}`;
+        }
+
+        // 补零
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        // 从HEX更新颜色
+        function updateFromHex() {
+            const hexInput = document.getElementById('hex-input');
+            const hex = hexInput.value.trim();
+
+            if (/^#[0-9A-F]{6}$/i.test(hex)) {
+                updateColor(hex);
+            } else {
+                hexInput.classList.add('error');
+                setTimeout(() => hexInput.classList.remove('error'), 300);
+            }
+        }
+
+        // 从RGB更新颜色
+        function updateFromRgb() {
+            const rgbInput = document.getElementById('rgb-input');
+            const rgb = rgbInput.value.trim();
+            const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
+
+            if (match) {
+                const r = parseInt(match[1]);
+                const g = parseInt(match[2]);
+                const b = parseInt(match[3]);
+
+                if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                    const hex = rgbToHex(r, g, b);
+                    updateColor(hex);
+                } else {
+                    rgbInput.classList.add('error');
+                    setTimeout(() => rgbInput.classList.remove('error'), 300);
+                }
+            } else {
+                rgbInput.classList.add('error');
+                setTimeout(() => rgbInput.classList.remove('error'), 300);
+            }
+        }
+
+        // 从HSL更新颜色
+        function updateFromHsl() {
+            const hslInput = document.getElementById('hsl-input');
+            const hsl = hslInput.value.trim();
+            const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
+
+            if (match) {
+                const h = parseInt(match[1]);
+                const s = parseInt(match[2]);
+                const l = parseInt(match[3]);
+
+                if (h >= 0 && h <= 360 && s >= 0 && s <= 100 && l >= 0 && l <= 100) {
+                    const rgb = hslToRgb(h, s, l);
+                    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+                    updateColor(hex);
+                } else {
+                    hslInput.classList.add('error');
+                    setTimeout(() => hslInput.classList.remove('error'), 300);
+                }
+            } else {
+                hslInput.classList.add('error');
+                setTimeout(() => hslInput.classList.remove('error'), 300);
+            }
+        }
+
+        // 更新颜色
+        function updateColor(hex) {
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            // 更新预览
+            const preview = document.getElementById('color-preview');
+            if (preview) {
+                preview.style.backgroundColor = hex;
+            }
+
+            // 更新输入框
+            const hexInput = document.getElementById('hex-input');
+            const rgbInput = document.getElementById('rgb-input');
+            const hslInput = document.getElementById('hsl-input');
+
+            if (hexInput) hexInput.value = hex;
+            if (rgbInput) rgbInput.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            if (hslInput) hslInput.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+
+            // 更新值显示
+            const hexValue = document.getElementById('hex-value');
+            const rgbValue = document.getElementById('rgb-value');
+            const hslValue = document.getElementById('hsl-value');
+
+            if (hexValue) hexValue.textContent = `HEX: ${hex}`;
+            if (rgbValue) rgbValue.textContent = `RGB: rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            if (hslValue) hslValue.textContent = `HSL: hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+        }
+
+        // HEX转RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // RGB转HEX
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        // RGB转HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+                switch (max) {
+                    case r:
+                        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+                        break;
+                    case g:
+                        h = ((b - r) / d + 2) / 6;
+                        break;
+                    case b:
+                        h = ((r - g) / d + 4) / 6;
+                        break;
+                }
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        // HSL转RGB
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            }
+
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+        // 文本转换
+        function transformText(type) {
+            const input = document.getElementById('text-input');
+            const output = document.getElementById('text-output');
+
+            if (!input || !output) return;
+
+            let text = input.value;
+            let result = '';
+
+            switch (type) {
+                case 'uppercase':
+                    result = text.toUpperCase();
+                    break;
+                case 'lowercase':
+                    result = text.toLowerCase();
+                    break;
+                case 'capitalize':
+                    result = text.replace(/\b\w/g, l => l.toUpperCase());
+                    break;
+                case 'reverse':
+                    result = text.split('').reverse().join('');
+                    break;
+            }
+
+            output.textContent = result;
+        }
+
+        // 文本统计
+        function countText() {
+            const input = document.getElementById('text-input');
+            const output = document.getElementById('text-output');
+
+            if (!input || !output) return;
+
+            const text = input.value;
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const characters = text.length;
+            const spaces = (text.match(/\s/g) || []).length;
+
+            const translation = translations[currentLanguage];
+            const wordsLabel = translation['text-words'] || '字数';
+            const charactersLabel = translation['text-characters'] || '字符数';
+            const spacesLabel = translation['text-spaces'] || '空格数';
+
+            output.innerHTML = `
+                ${wordsLabel}: ${words}<br>
+                ${charactersLabel}: ${characters}<br>
+                ${spacesLabel}: ${spaces}
+            `;
+        }
+
+        // 自动更新文本
+        function autoUpdateText() {
+            const input = document.getElementById('text-input');
+            const output = document.getElementById('text-output');
+
+            if (!input || !output) return;
+
+            output.textContent = input.value;
+        }
+
+        // 显示通知
+        function showNotification(message) {
+            // 移除现有通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // 创建新通知
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // 3秒后自动移除
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = isRTL(currentLanguage) ? 'translateX(-100%)' : 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // 应用主题
+        function applyTheme(themeIndex) {
+            const theme = themes[themeIndex];
+            root.style.setProperty('--primary-start', theme.start);
+            root.style.setProperty('--primary-end', theme.end);
+            root.style.setProperty('--accent-color', theme.accent);
+
+            // 根据主题索引自动切换深色/浅色模式
+            if (themeIndex >= 4) {
+                // 深色主题，开启深色模式
+                document.body.classList.add('dark-mode');
+                darkModeCheckbox.checked = true;
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                // 浅色主题，关闭深色模式
+                document.body.classList.remove('dark-mode');
+                darkModeCheckbox.checked = false;
+                localStorage.setItem('darkMode', 'false');
+            }
+
+            // 更新主题颜色选择器的活动状态
+            document.querySelectorAll('.theme-color').forEach(color => {
+                color.classList.remove('active');
+                if (parseInt(color.getAttribute('data-theme')) === themeIndex) {
+                    color.classList.add('active');
+                }
+            });
+        }
+
+        // 初始化应用
+        function initApp() {
+            // 加载保存的设置
+            const savedLanguage = localStorage.getItem('selectedLanguage') || 'zh-CN';
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            const savedAutoExpand = localStorage.getItem('autoExpand') !== 'false';
+            const savedAnimations = localStorage.getItem('animations') !== 'false';
+            const savedTheme = localStorage.getItem('selectedTheme') || '0';
+
+            // 应用设置
+            changeLanguage(savedLanguage);
+
+            // 应用主题（这会自动设置深色/浅色模式）
+            applyTheme(parseInt(savedTheme));
+
+            // 如果用户之前手动设置了深色模式，并且与主题不匹配，则覆盖主题设置
+            if ((savedTheme < 4 && savedDarkMode) || (savedTheme >= 4 && !savedDarkMode)) {
+                if (savedDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    darkModeCheckbox.checked = true;
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    darkModeCheckbox.checked = false;
+                }
+            }
+
+            if (!savedAutoExpand) {
+                sidebarContainer.classList.add('no-hover');
+                document.getElementById('auto-expand').checked = false;
+            }
+
+            if (!savedAnimations) {
+                document.body.classList.add('no-animations');
+                document.getElementById('animations').checked = false;
+            }
+
+            // 初始化颜色转换器
+            updateColor('#000000');
+
+            // 添加事件监听器
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // 更新活动菜单项
+                    menuLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    // 切换页面
+                    const pageId = link.getAttribute('data-page');
+                    contentPages.forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    const targetPage = document.getElementById(`${pageId}-page`);
+                    if (targetPage) {
+                        targetPage.classList.add('active');
+                    } else {
+                        console.error(`Page with ID ${pageId}-page not found`);
+                    }
+                });
+            });
+
+            // 深色模式切换
+            darkModeCheckbox.addEventListener('change', () => {
+                if (darkModeCheckbox.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'true');
+                    showNotification(translations[currentLanguage]['notification-dark-mode-on']);
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'false');
+                    showNotification(translations[currentLanguage]['notification-dark-mode-off']);
+                }
+            });
+
+            // 自动展开侧边栏切换
+            document.getElementById('auto-expand').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    sidebarContainer.classList.remove('no-hover');
+                    localStorage.setItem('autoExpand', 'true');
+                    showNotification(translations[currentLanguage]['notification-auto-expand-on']);
+                } else {
+                    sidebarContainer.classList.add('no-hover');
+                    localStorage.setItem('autoExpand', 'false');
+                    showNotification(translations[currentLanguage]['notification-auto-expand-off']);
+                }
+            });
+
+            // 动画效果切换
+            document.getElementById('animations').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    document.body.classList.remove('no-animations');
+                    localStorage.setItem('animations', 'true');
+                    showNotification(translations[currentLanguage]['notification-animations-on']);
+                } else {
+                    document.body.classList.add('no-animations');
+                    localStorage.setItem('animations', 'false');
+                    showNotification(translations[currentLanguage]['notification-animations-off']);
+                }
+            });
+
+            // 语言选择
+            languageSelect.addEventListener('change', (e) => {
+                const lang = e.target.value;
+                changeLanguage(lang);
+                showNotification(`${translations[currentLanguage]['notification-language-changed']}${e.target.options[e.target.selectedIndex].text}`);
+            });
+
+            // 主题颜色选择
+            document.querySelectorAll('.theme-color').forEach(color => {
+                color.addEventListener('click', () => {
+                    const themeIndex = parseInt(color.getAttribute('data-theme'));
+                    applyTheme(themeIndex);
+
+                    localStorage.setItem('selectedTheme', themeIndex);
+
+                    const themeName = themes[themeIndex].name;
+                    showNotification(`${translations[currentLanguage]['notification-theme-changed']}${themeName}${translations[currentLanguage]['notification-theme']}`);
+                });
+            });
+
+            // 其他设置项
+            document.getElementById('desktop-notifications').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    showNotification(translations[currentLanguage]['notification-desktop-notifications-on']);
+                } else {
+                    showNotification(translations[currentLanguage]['notification-desktop-notifications-off']);
+                }
+            });
+
+            document.getElementById('sound-alerts').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    showNotification(translations[currentLanguage]['notification-sound-alerts-on']);
+                } else {
+                    showNotification(translations[currentLanguage]['notification-sound-alerts-off']);
+                }
+            });
+
+            document.getElementById('email-notifications').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    showNotification(translations[currentLanguage]['notification-email-notifications-on']);
+                } else {
+                    showNotification(translations[currentLanguage]['notification-email-notifications-off']);
+                }
+            });
+
+            document.getElementById('browsing-history').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    showNotification(translations[currentLanguage]['notification-browsing-history-on']);
+                } else {
+                    showNotification(translations[currentLanguage]['notification-browsing-history-off']);
+                }
+            });
+
+            document.getElementById('auto-save-forms').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    showNotification(translations[currentLanguage]['notification-auto-save-forms-on']);
+                } else {
+                    showNotification(translations[currentLanguage]['notification-auto-save-forms-off']);
+                }
+            });
+        }
+
+        // 页面加载完成后初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>
